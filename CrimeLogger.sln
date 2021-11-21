@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrimeLogger.Shared", "Crime
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{286F0753-07AC-4D88-BF97-29BDA4141547}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{7FAC1A3A-530D-4381-85BC-4F9E210620F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{7FAC1A3A-530D-4381-85BC-4F9E210620F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{6F1D24CE-F811-48E5-805C-7B74A4598172}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7FAC1A3A-530D-4381-85BC-4F9E210620F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FAC1A3A-530D-4381-85BC-4F9E210620F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FAC1A3A-530D-4381-85BC-4F9E210620F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F1D24CE-F811-48E5-805C-7B74A4598172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F1D24CE-F811-48E5-805C-7B74A4598172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F1D24CE-F811-48E5-805C-7B74A4598172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F1D24CE-F811-48E5-805C-7B74A4598172}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
