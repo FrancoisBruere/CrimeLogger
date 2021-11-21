@@ -12,4 +12,5 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddScoped<ICrimeProvinceCitySuburbService, CrimeProvinceCitySuburbService>();
 
+
 await builder.Build().RunAsync();

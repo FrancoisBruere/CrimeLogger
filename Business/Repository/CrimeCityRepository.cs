@@ -1,5 +1,8 @@
-﻿using Business.Repository.IRepository;
+﻿using AutoMapper;
+using Business.Repository.IRepository;
 using CrimeLogger.Shared;
+using DataAccess.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +13,26 @@ namespace Business.Repository
 {
     public class CrimeCityRepository : ICrimeCityRepository
     {
-        public Task<IEnumerable<CrimeCityDTO>> GetAllCrimeCities()
+        private readonly ApplicationDbContext _db;
+        private readonly IMapper _mapper;
+
+        public CrimeCityRepository(ApplicationDbContext db, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _db = db;
+            _mapper = mapper;
+        }
+        public async Task<IEnumerable<CrimeCityDTO>> GetAllCrimeCities()
+        {
+            IEnumerable<CrimeCityDTO> crimeCityDTOs =
+                   _mapper.Map<IEnumerable<CrimeCity>, IEnumerable<CrimeCityDTO>>(_db.CrimeCities);
+
+            return crimeCityDTOs;
         }
 
-        public Task<IEnumerable<CrimeCityDTO>> GetCrimeCitiesByProvinceId(int provinceId)
+        public async Task<IEnumerable<CrimeCityDTO>> GetCrimeCitiesByProvinceId(int provinceId)
         {
-            throw new NotImplementedException();
+            return _mapper.Map<IEnumerable<CrimeCity>, IEnumerable<CrimeCityDTO>>(
+               await _db.CrimeCities.Where(x => x.ProvinceId == provinceId).ToListAsync());
         }
     }
 }
