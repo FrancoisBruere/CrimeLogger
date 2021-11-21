@@ -1,16 +1,50 @@
 using Business.Repository;
 using Business.Repository.IRepository;
+using CrimeLoggger_Server.Helper;
 using DataAccess.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+
+var appSettingSection = builder.Configuration.GetSection("APISettings");
+builder.Services.Configure<APISettings>(appSettingSection);
+var apiSettings = appSettingSection.Get<APISettings>(); // pupulate key
+var key = Encoding.ASCII.GetBytes(apiSettings.SecretKey);
+
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateAudience = true,
+        ValidateIssuer = true,
+        ValidAudience = apiSettings.ValidAudience,
+        ValidIssuer = apiSettings.ValidIssuer,
+        ClockSkew = TimeSpan.Zero
+
+    };
+});
+
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
