@@ -40,8 +40,9 @@ builder.Services.AddAuthentication(opt =>
         ValidateIssuer = true,
         ValidAudience = apiSettings.ValidAudience,
         ValidIssuer = apiSettings.ValidIssuer,
+        ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
-
+       
     };
 });
 
@@ -84,9 +85,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapRazorPages();
-app.MapControllers();
-app.MapFallbackToFile("index.html");
+app.UseEndpoints(endpoints =>
+{
+    app.MapRazorPages();
+    app.MapControllers();
+    app.MapFallbackToFile("index.html");
+});
 
 app.Run();
