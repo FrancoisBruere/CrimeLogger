@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [Controller]
     public class CrimeProvinceController : Controller
     {
         private readonly ICrimeProvinceRepository _crimeProvinceRepository;

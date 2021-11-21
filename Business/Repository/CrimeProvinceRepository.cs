@@ -24,9 +24,20 @@ namespace Business.Repository
 
         public async Task<IEnumerable<CrimeProvinceDTO>> GetAllCrimeProvinces()
         {
-            IEnumerable<CrimeProvinceDTO> crimeProvinceDTOs =
-                _mapper.Map<IEnumerable<CrimeProvince>, IEnumerable<CrimeProvinceDTO>>(_db.CrimeProvinces);
-            return crimeProvinceDTOs;
+
+            try
+            {
+                IEnumerable<CrimeProvinceDTO> crimeProvinceDTOs =
+               _mapper.Map<IEnumerable<CrimeProvince>, IEnumerable<CrimeProvinceDTO>>(_db.CrimeProvinces);
+                return crimeProvinceDTOs;
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message);
+            }
+
+           
         }
     }
 }

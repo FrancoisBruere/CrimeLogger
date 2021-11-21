@@ -1,4 +1,5 @@
 ﻿@page "/counter"
+@inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
 
 <PageTitle>Counter</PageTitle>
 
@@ -8,11 +9,18 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+<button class="btn btn-primary" @onclick="dosomething">GetProvince</button>
+
 @code {
     private int currentCount = 0;
 
     private void IncrementCount()
     {
         currentCount++;
+    }
+
+    public async Task dosomething()
+    {
+        var result = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
     }
 }
