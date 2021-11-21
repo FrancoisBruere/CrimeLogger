@@ -1,5 +1,8 @@
-﻿using Business.Repository.IRepository;
+﻿using AutoMapper;
+using Business.Repository.IRepository;
 using CrimeLogger.Shared;
+using DataAccess.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,24 +13,47 @@ namespace Business.Repository
 {
     public class CrimeDetailRepository : ICrimeDetailRepository
     {
-        public Task<CrimeDetailDTO> CreateCrime(CrimeDetailDTO crimeDetailDTO)
+        private readonly ApplicationDbContext _db;
+        private readonly IMapper _mapper;
+
+        public CrimeDetailRepository(ApplicationDbContext db, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _db = db;
+            _mapper = mapper;
         }
 
-        public Task<IEnumerable<CrimeDetailDTO>> GetAllCrimes()
+        public async Task<CrimeDetailDTO> CreateCrime(CrimeDetailDTO crimeDetailDTO)
         {
-            throw new NotImplementedException();
+            CrimeDetail crimeDetail = _mapper.Map<CrimeDetailDTO, CrimeDetail>(crimeDetailDTO);
+            crimeDetail.CreatedBy = "Developer";
+            crimeDetail.CreatedDate = DateTime.Now;
+
+            var addedCrimeDetail = await _db.CrimeDetails.AddAsync(crimeDetail);
+
+            await _db.SaveChangesAsync();
+
+            return _mapper.Map<CrimeDetail, CrimeDetailDTO>(addedCrimeDetail.Entity);
         }
 
-        public Task<CrimeDetailDTO> GetCrime(int crimeId)
+        public async Task<IEnumerable<CrimeDetailDTO>> GetAllCrimes()
         {
-            throw new NotImplementedException();
+            IEnumerable<CrimeDetailDTO> crimeDetailDTOs =
+                   _mapper.Map<IEnumerable<CrimeDetail>, IEnumerable<CrimeDetailDTO>>(_db.CrimeDetails);
+
+            return crimeDetailDTOs;
         }
 
-        public Task<IEnumerable<CrimeDetailDTO>> GetCrimeByType(int typeId)
+        public async Task<CrimeDetailDTO> GetCrime(int crimeId)
         {
-            throw new NotImplementedException();
+            CrimeDetailDTO crimeDetail = _mapper.Map<CrimeDetail, CrimeDetailDTO>(
+                    await _db.CrimeDetails.FirstOrDefaultAsync(x => x.Id == crimeId));
+            return crimeDetail;
+        }
+
+        public async Task<IEnumerable<CrimeDetailDTO>> GetCrimeByType(int typeId)
+        {
+            return _mapper.Map<IEnumerable<CrimeDetail>, IEnumerable<CrimeDetailDTO>>(
+               await _db.CrimeDetails.Where(x => x.CrimeType_Id == typeId).ToListAsync());
         }
     }
 }
