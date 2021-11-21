@@ -10,7 +10,7 @@ namespace CrimeLoggger_Server.Helper
         public string SecretKey { get; set; }
         public string ValidAudience { get; set; }
         public string ValidIssuer { get; set; }
-        public int ExpiryInDays { get; set; }
+        
 
 
     }

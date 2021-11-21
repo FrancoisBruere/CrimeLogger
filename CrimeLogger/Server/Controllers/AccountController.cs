@@ -110,7 +110,7 @@ namespace CrimeLogger.Server.Controllers
                     issuer: _aPISettings.ValidIssuer,
                     audience: _aPISettings.ValidAudience,
                     claims: claims,
-                    expires: DateTime.Now.AddDays(30),
+                    expires: DateTime.Now.AddDays(SD.TokenLifeInDays),
                     signingCredentials: signinCredentials);
 
                 var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
