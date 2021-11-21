@@ -61,31 +61,6 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false),
-                    Source = table.Column<string>(type: "TEXT", nullable: false),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    LastName = table.Column<string>(type: "TEXT", nullable: false),
-                    ProvinceId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CityId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SuburbId = table.Column<int>(type: "INTEGER", nullable: false),
-                    StreetName = table.Column<string>(type: "TEXT", nullable: true),
-                    RegistationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IsEmailNotification = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsPushNotification = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsTermsAccepted = table.Column<bool>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CrimeCities",
                 columns: table => new
                 {
@@ -146,9 +121,6 @@ namespace DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "CrimeTypes");
-
-            migrationBuilder.DropTable(
-                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "CrimeCities");
