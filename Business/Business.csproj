@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CrimeLogger\Shared\CrimeLogger.Shared.csproj" />
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
