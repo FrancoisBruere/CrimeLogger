@@ -60,7 +60,7 @@ namespace CrimeLogger.Server.Controllers
 
                 IsEmailNotification = userRequestDTO.IsEmailNotification,
                 IsTermsAccepted = userRequestDTO.IsTermsAccepted,
-                EmailConfirmed = true
+                EmailConfirmed = true  // Change to send to user with confirmation link
             };
 
             var result = await _userManager.CreateAsync(user, userRequestDTO.Password);
