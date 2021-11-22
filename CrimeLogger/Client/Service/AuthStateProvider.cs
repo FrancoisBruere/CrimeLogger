@@ -27,7 +27,7 @@ namespace CrimeLogger_Client.Service
             var token = await _localStorage.GetItemAsync<string>(SD.Local_Token); // retrieve token from local storage
             if (token == null) // pass  request
             {
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())); // if no token then logged out user
             }
 
             _httpclient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token); //add bearer token to http client
