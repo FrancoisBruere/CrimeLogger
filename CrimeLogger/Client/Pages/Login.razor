@@ -1,0 +1,101 @@
+﻿@page "/login"
+
+@using System.Web
+@using CrimeLogger.Shared
+
+@inject IAuthenticationService authenticationService
+@inject NavigationManager navigationManager
+
+
+<EditForm Model="UserForAuthentication" OnValidSubmit="LoginUser">
+    <DataAnnotationsValidator />
+    <div class="py-4">
+        <div class=" row form-group ">
+            <div class="col-6 offset-3 ">
+                <div class="card border">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-black text-center py-2">
+                            <strong>Sign In</strong>
+                        </h3>
+                        @if (ShowAuthenticationErrors)
+                        {
+                            <p class="text-center text-danger">@Errors</p>
+                        }
+                        <InputText @bind-Value="UserForAuthentication.UserName" id="email" placeholder="Email" class="form-control mb-2" />
+                        <ValidationMessage For="(()=>UserForAuthentication.UserName)"></ValidationMessage>
+                        <InputText @bind-Value="UserForAuthentication.Password" type="password" placeholder="Password" id="password" class="form-control mb-2" />
+                        <ValidationMessage For="(()=>UserForAuthentication.Password)"></ValidationMessage>
+
+                        <hr style="background-color: lightgrey " />
+                        <div class="py-2">
+                            @if (IsProcessing)
+                            {
+                                <button type="submit" class="btn btn-outline-dark btn-block disabled"><i class="fas fa-sign-in-alt"></i> Please Wait....</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-outline-dark btn-block"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+
+                            }
+                            <a href="/registration"
+                               class="btn btn-primary text-white mt-3" style="text-align:center"><i class="fas fa-user-plus"></i> Register as a new user</a>
+                            <a href="/forgotpassword"
+                               class="btn btn-secondary text-white mt-3" style="text-align:center"><i class="fas fa-unlock-alt"></i> Forgot Password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+
+    private AuthenticationDTO UserForAuthentication = new AuthenticationDTO();
+    public bool IsProcessing { get; set; } = false;
+    public bool ShowAuthenticationErrors { get; set; }
+
+    public string ReturnUrl { get; set; }
+
+    public string Errors { get; set; }
+
+
+    private async Task LoginUser()
+    {
+
+        ShowAuthenticationErrors = false;
+        IsProcessing = true;
+
+        var result = await authenticationService.Login(UserForAuthentication);
+
+
+        if (result.isAuthSuccessful)
+        {
+            IsProcessing = false;
+
+            // get and set return page that the user was on
+            var absoluteUri = new Uri(navigationManager.Uri);
+            var queryParam = HttpUtility.ParseQueryString(absoluteUri.Query);
+            ReturnUrl = queryParam["returnUrl"];
+            
+            if (string.IsNullOrEmpty(ReturnUrl))
+            {
+                navigationManager.NavigateTo("/");
+            }
+            else
+            {
+                navigationManager.NavigateTo("/" + ReturnUrl);
+            }
+        }
+        else
+        {
+            IsProcessing = false;
+            Errors = result.ErrorMessage;
+            ShowAuthenticationErrors = true;
+
+        }
+
+    }
+
+}
