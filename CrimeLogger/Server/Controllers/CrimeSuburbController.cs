@@ -28,8 +28,6 @@ namespace CrimeLogger.Server.Controllers
             {
                 return NotFound();
             }
-
-
             return Ok(suburbDetails);
 
         }

@@ -1,0 +1,88 @@
+﻿@page "/crime/detail"
+
+@using CrimeLogger.Shared
+@using Microsoft.AspNetCore.Authorization
+
+@inject ICrimeDetailService crimeDetailService
+@inject ICrimeTypeService crimeTypeService
+@inject ICrimeProvinceCitySuburbService ICrimeProvinceCitySuburb
+@inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Roles =SD.Role_User)]
+
+@if (Crimes.Any())
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <marquee style="color: #000000; padding-bottom: 0rem " width="99%" direction="left" height="30px">
+                <h3>Total number of crimes submitted: @_crimeCount .... Report crimes: SAPS Crime Stop (Tip-off Line): 0860 010 111 .... Child Protect: childprotect@saps.org.za</h3>
+            </marquee>
+            <RadzenGoogleMap class="ml-3 mr-3 mb-5" style="height:800px;" width=100% Zoom="@zoom" Center="@(new GoogleMapPosition() {Lat = -28.479262, Lng = 24.6727135 })">
+                <Markers>
+                    @foreach (var crime in Crimes)
+                    {
+                        if (crime.IsMarkerAdded == true)
+                        {
+                            var type = CrimeTypes.FirstOrDefault(p => p.CrimeId == crime.CrimeType_Id);
+
+                            <RadzenGoogleMapMarker Title="@crime.CreatedDate.Date.ToLongDateString()" Label="@type.Name" Position="@(new GoogleMapPosition() { Lat = crime.MyLat, Lng = crime.MyLng })" />
+                        }
+                    }
+                </Markers>
+            </RadzenGoogleMap>
+        </div>
+    </div>
+}
+else
+{
+<div id="app">
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px; margin-left:-100px">
+        <img src="/images/1495.gif" alt="loading" />
+
+    </div>
+</div>
+}
+
+@code {
+
+    private int zoom = 5;
+    //private string clickedPosition = "";
+    private int _crimeCount = 0;
+
+    private IEnumerable<CrimeDetailDTO> Crimes { get; set; } = new List<CrimeDetailDTO>();
+    private IEnumerable<CrimeTypeDTO> CrimeTypes { get; set; } = new List<CrimeTypeDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            CrimeTypes = await crimeTypeService.GetAllCrimeTypes();
+
+            await LoadCrimes();
+            _crimeCount = Crimes.Count();
+
+            await jsRuntime.ToastrSeccess("Crimes successfully loaded zoom to view");
+
+        }
+        catch (Exception e)
+        {
+
+            await jsRuntime.ToastrError(e.Message);
+        }
+    }
+
+    public void ShowCrime()
+    {
+        Console.WriteLine("Marker clicked");
+    }
+
+    private async Task LoadCrimes()
+    {
+        Crimes = await crimeDetailService.GetAllCrimeDetails();
+
+        if (!Crimes.Any())
+        {
+            await jsRuntime.ToastrError("Failed to load crimes");
+        }
+    }
+}

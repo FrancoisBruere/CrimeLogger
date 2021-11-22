@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using System.Text;
+using CrimeLogger.Client.Service;
+using CrimeLogger.Client.Service.IService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +63,7 @@ builder.Services.AddScoped<ICrimeCityRepository, CrimeCityRepository>();
 builder.Services.AddScoped<ICrimeSuburbRepository, CrimeSuburbRepository>();
 builder.Services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
 
+
 builder.Services.AddRouting(option => option.LowercaseUrls = true);
 
 
@@ -87,6 +90,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.UseEndpoints(endpoints =>
 {

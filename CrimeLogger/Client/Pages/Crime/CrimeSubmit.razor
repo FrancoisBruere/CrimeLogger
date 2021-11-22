@@ -1,0 +1,418 @@
+﻿@page "/crime/submit"
+
+@using Microsoft.AspNetCore.Components
+@using CrimeLogger.Shared
+@using Microsoft.AspNetCore.Authorization
+
+@inject ICrimeTypeService CrimeTypeService
+@inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
+@inject ICrimeDetailService CrimeDetailService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService localStorage
+
+@attribute [Authorize(Roles = SD.Role_User)]
+
+<PageTitle>Submitting-Crimes</PageTitle>
+@if (CrimeDetailModel == null)
+{
+    <div><img src="/images/1495.gif" alt="loading" style="place-content:center" /><p>Loading.....</p></div>
+}
+else
+{
+    <div class="row mt-2 mb-5 ml-2 mr-2">
+        <h3 class="md-2 col-sm-12 pl-0" style="color: #000000 ">@Title Crime Details</h3>
+        <div class="card col-sm-6" style="border-radius:10px">
+            <div class="card-body">
+                <EditForm Model="CrimeDetailModel" OnValidSubmit="HandelCrimeUpsert">
+                    <DataAnnotationsValidator />
+                    @*<ValidationSummary />*@
+                    <div class="form-group">
+                        <label>Province</label>
+                        <InputSelect @bind-Value="CrimeDetailModel.Province_Id" @oninput="CityChange" class="form-control">
+                            <option value="">-- Select Province --</option>
+                            @foreach (var prov in CrimeProvinces)
+                                {
+
+                                <option value="@prov.ProvinceId">@prov.Name</option>
+                                }
+                        </InputSelect>
+                        <ValidationMessage For="() => CrimeDetailModel.Province_Id" />
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <InputSelect @bind-Value="CrimeDetailModel.City_Id" @oninput="SuburbChange" class="form-control">
+                            <option value="">-- Select City --</option>
+                            @if (CrimeCities.Count() > 0)
+                                {
+                                @foreach (var city in CrimeCities)
+                                    {
+                                    <option value="@city.CityId">@city.Name</option>
+                                    }
+
+                                }
+
+                        </InputSelect>
+                        <ValidationMessage For="() => CrimeDetailModel.City_Id" />
+                    </div>
+                    <div class="form-group">
+                        <label>Suburb</label>
+                        <InputSelect @bind-Value="CrimeDetailModel.Suburb_Id" class="form-control">
+                            <option value="">-- Select Suburb --</option>
+                            @foreach (var suburb in CrimeSuburbs)
+                                {
+                                    suburbIdSelected = suburb.SuburbId;
+                                <option value="@suburb.SuburbId">@suburb.Name</option>}
+
+                        </InputSelect>
+                        <ValidationMessage For="() => CrimeDetailModel.Suburb_Id" />
+                    </div>
+                    <div class="form-group">
+                        <label>Street Name</label>
+                        <InputText @bind-Value="CrimeDetailModel.Street" class="form-control"></InputText>
+                        <ValidationMessage For="() => CrimeDetailModel.Street" />
+                    </div>
+                    <div class="form-group">
+                        <label>Type of Crime</label>
+                        <InputSelect @bind-Value="CrimeDetailModel.CrimeType_Id" class="form-control">
+                            <option value="">-- Select Type of Crime --</option>
+
+                            @foreach (var type in CrimeTypes)
+                                {
+
+                                <option value="@type.CrimeId">@type.Name</option>}
+                        </InputSelect>
+                        <ValidationMessage For="() => CrimeDetailModel.CrimeType_Id" />
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Crime</label>
+                        <InputDate @bind-Value="CrimeDetailModel.CrimeDate" class="form-control">
+
+                        </InputDate>
+                        <ValidationMessage For="() => CrimeDetailModel.CrimeDate" />
+                    </div>
+                    <div class="form-group">
+                        <label>Details</label>
+                        <InputText @bind-Value="CrimeDetailModel.Description" class="form-control"></InputText>
+                    </div>
+                    <div class="form-group">
+                        <label>True and Honest Report</label>
+                        <InputCheckbox @bind-Value="CrimeDetailModel.IsTrueCrime" class="list-inline"></InputCheckbox>
+                        <ValidationMessage For="() => CrimeDetailModel.IsTrueCrime" />
+
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-danger">@Title Crime</button>
+                        <NavLink href="crime/detail" class="btn btn-dark">Back</NavLink>
+                    </div>
+
+                    <div class="form-group">
+                        <InputText @bind-Value="CrimeDetailModel.CreatedBy" input type="hidden" class="form-control"></InputText>
+                    </div>
+
+                </EditForm>
+
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="">
+
+                <div class="form-group">
+                    <div class="row col-sm-12">
+                        <div class="card col-sm-12 mt-0" style="border-radius:10px">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <p>
+                                        <b>Submit:</b> Please submit valid and truthful information only.
+                                        Multiple submissions will not be allowed.
+                                        Each registered user will be able to submit no more than two submissions per month.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row col-sm-12">
+                        <div class="card col-sm-12 mt-2" style="border-radius:10px">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <p>
+                                        <b>Address:</b> Please select a province, city and suburb from the dropdown lists provided.
+                                        Street name is required, you are not obligated to provide unit/property/house numbers.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row col-sm-12">
+                        <div class="card col-sm-12 mt-2" style="border-radius:10px">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <p>
+                                        <b>GeoCoding:</b> GeoCoding uses the address details provided to place a marker <i class="fas fa-map-marker-alt" style="color:darkred"></i>
+                                        on the map therefore it is reccomended to provide as much detail as possible
+                                        i.e "1st Street","1st Avenue", Peter Road or 14 Peter Road.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row col-sm-12">
+                        <div class="card col-sm-12 mt-2" style="border-radius:10px">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <p>
+                                        <b>Type of Crime:</b> Select the closest matching type available from the provided dropdown.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row col-sm-12">
+                        <div class="card col-sm-12 mt-2" style="border-radius:10px">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <p>
+                                        <b>Date and Details:</b> Select the date that the crime was committed.
+                                        Details are not required but could be of use to other system users.
+                                        <b>Possible details:</b> Description of persons that commited the crime, items or tools used to commit the crime.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row col-sm-12">
+                        <div class="card col-sm-12 mt-2" style="border-radius:10px">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <p>
+                                        <b>True and Honest:</b> Supplied information like suburb and street names will be used to send alerts to other users. Please do
+                                        not report false crimes. Registered user information will not be visible via any part of the apllication.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+
+@code{
+
+    private CrimeDetailDTO CrimeDetailModel { get; set; } = new CrimeDetailDTO();
+
+    private IEnumerable<CrimeProvinceDTO> CrimeProvinces { get; set; } = new List<CrimeProvinceDTO>();
+    private IEnumerable<CrimeCityDTO> CrimeCities { get; set; } = new List<CrimeCityDTO>();
+    private IEnumerable<CrimeSuburbDTO> CrimeSuburbs { get; set; } = new List<CrimeSuburbDTO>();
+    private IEnumerable<CrimeTypeDTO> CrimeTypes { get; set; } = new List<CrimeTypeDTO>();
+
+    private string Title { get; set; } = "Submit";
+
+    private int? provinceIdSelected { get; set; }
+    private string _provinceName { get; set; }
+    private int? cityIdSelected { get; set; }
+    private string _cityName { get; set; }
+    private int? suburbIdSelected { get; set; }
+    private string _suburbName { get; set; }
+
+    public bool ParentProcessing { get; set; }
+
+    private string _API = "AIzaSyAoljylNNfvCee28OD3tHGgAayv7nJtlg4";
+    double MyLat { get; set; }
+    double MyLng { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        CrimeDetailModel.CrimeDate = DateTime.Now;
+        CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
+        CrimeTypes = await CrimeTypeService.GetAllCrimeTypes();
+    }
+
+    private async Task CityChange(ChangeEventArgs args)
+    {
+
+        if (args.Value == null)
+        {
+            provinceIdSelected = null;
+            await JsRuntime.ToastrError("OOPS! Something went wrong please try again");
+        }
+        else
+        {
+
+            provinceIdSelected = Convert.ToInt32(args.Value);
+
+            CrimeCities = await CrimeProvinceCitySuburbService.GetCityDetailsByProvinceId(provinceIdSelected.Value);
+        }
+    }
+
+    private async Task SuburbChange(ChangeEventArgs args)
+    {
+
+        if (args.Value == null)
+        {
+            cityIdSelected = null;
+            await JsRuntime.ToastrError("OOPS! Something went wrong please try again");
+
+        }
+        else
+        {
+
+            cityIdSelected = Convert.ToInt32(args.Value);
+
+            CrimeSuburbs = await CrimeProvinceCitySuburbService.GetSuburbDetailsByCityId(cityIdSelected.Value);
+        }
+    }
+
+    private async Task HandelCrimeUpsert()
+    {
+       
+        try
+        {
+
+            var userInfo = await localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+            CrimeDetailModel.CreatedBy = userInfo.Id;
+
+
+            if (CrimeDetailModel.Id == 0 && userInfo != null)
+            {
+
+
+                    await HandleGeoCoding();
+
+                    CrimeDetailModel.MyLat = MyLat;
+                    CrimeDetailModel.MyLng = MyLng;
+
+                    if (MyLat != 0 && MyLng != 0)
+                    {
+                        CrimeDetailModel.IsMarkerAdded = true;
+                    }
+                    else
+                    {
+                        CrimeDetailModel.IsMarkerAdded = false;
+                    }
+
+                    var createdResult = await CrimeDetailService.CreateCrime(CrimeDetailModel);
+
+
+                    await JsRuntime.ToastrSeccess("Crime successfully logged! Stay Safe!");
+            }
+        }
+        catch (Exception e)
+        {
+
+            throw new Exception(e.Message);
+        }
+
+
+        NavigationManager.NavigateTo("/");
+    }
+
+
+    // GeoCoding Method for crime submission page
+    public async Task<string> HandleGeoCoding()
+    {
+        try
+        {
+            GoogleGeocoder geocoder = new GoogleGeocoder() { ApiKey = _API };
+
+
+            IEnumerable<CrimeProvinceDTO> provincequery = CrimeProvinces.Where(CrimeProvinces => CrimeProvinces.ProvinceId == provinceIdSelected);
+
+            if (provincequery.Any())
+            {
+                foreach (var prov in provincequery)
+                {
+                    _provinceName = prov.Name;
+                }
+            }
+
+            IEnumerable<CrimeCityDTO> cityquery = CrimeCities.Where(CrimeCities => CrimeCities.CityId == cityIdSelected);
+
+            if (cityquery.Any())
+            {
+                foreach (var city in cityquery)
+                {
+                    _cityName = city.Name;
+                }
+            }
+
+            IEnumerable<CrimeSuburbDTO> suburbquery = CrimeSuburbs.Where(CrimeSuburbs => CrimeSuburbs.SuburbId == suburbIdSelected);
+
+            if (suburbquery.Any())
+            {
+                foreach (var suburb in suburbquery)
+                {
+                    _suburbName = suburb.Name;
+                }
+            }
+
+
+
+            IEnumerable<GoogleAddress> addresses = await geocoder.GeocodeAsync($"South Africa,{_provinceName},{_cityName},{_suburbName},{CrimeDetailModel.Street} "); // pupulate addresses here
+
+            try
+            {
+
+                var country = addresses.Where(a => !a.IsPartialMatch).Select(a => a[GoogleAddressType.Country]).FirstOrDefault();
+
+                // if address matched = 2 might have to drop from geocoding
+
+                //if (addresses.Count() > 1)
+                //{
+                //    ParentProcessing = true;
+                //    StateHasChanged();
+                //    //await SomeMethod();
+                //}
+
+                //testModal.ShowModal();
+
+                var formattedAddress = ("Formatted: " + addresses.First().FormattedAddress); //Formatted: 1600 Pennsylvania Ave SE, Washington, DC 20003, USA
+                MyLat = (addresses.First().Coordinates.Latitude);
+                MyLng = (addresses.First().Coordinates.Longitude); //Coordinates: 38.8791981, -76.9818437
+                var MyLatLng = MyLat.ToString() + "," + MyLng.ToString();
+
+
+                if (MyLatLng != null)
+                {
+
+                    await JsRuntime.ToastrSeccess("GeoCoding completed");
+                }
+                else
+                {
+                    await JsRuntime.ToastrError("No action Required! GeoCoding was not successful! Manual Geocoding will be done on the adress for marker placement.");
+
+                }
+
+                return MyLatLng;
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+}

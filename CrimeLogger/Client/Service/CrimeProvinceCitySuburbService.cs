@@ -12,6 +12,17 @@ namespace CrimeLogger.Client.Service
         {
             _client = client;
         }
+
+        public async Task<IEnumerable<CrimeCityDTO>> GetAllCrimeCities()
+        {
+            var responce = await _client.GetAsync($"api/AllCrimeCities/");
+            var content = await responce.Content.ReadAsStringAsync();
+            var cities = JsonConvert.DeserializeObject<IEnumerable<CrimeCityDTO>>(content);
+
+            return cities;
+        }
+    
+
         public async Task<IEnumerable<CrimeProvinceDTO>> GetAllCrimeProvinces()
         {
             var response = await _client.GetAsync("api/CrimeProvince");
@@ -19,6 +30,15 @@ namespace CrimeLogger.Client.Service
             var provinces = JsonConvert.DeserializeObject<IEnumerable<CrimeProvinceDTO>>(content);
 
             return provinces;
+        }
+
+        public async Task<IEnumerable<CrimeSuburbDTO>> GetAllCrimeSuburbs()
+        {
+            var responce = await _client.GetAsync($"api/AllCrimeSuburbs/");
+            var content = await responce.Content.ReadAsStringAsync();
+            var suburbs = JsonConvert.DeserializeObject<IEnumerable<CrimeSuburbDTO>>(content);
+
+            return suburbs;
         }
 
         public async Task<IEnumerable<CrimeCityDTO>> GetCityDetailsByProvinceId(int provinceId)

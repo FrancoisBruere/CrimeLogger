@@ -1,0 +1,165 @@
+﻿@page "/crime/detailview"
+
+@using CrimeLogger.Shared
+@using Microsoft.AspNetCore.Authorization
+
+@inject ICrimeDetailService CrimeDetailService
+@inject ICrimeProvinceCitySuburbService ICrimeProvinceCitySuburb
+@inject ICrimeTypeService ICrimeType
+@inject IJSRuntime jsRuntime
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize(Roles = SD.Role_User)]
+
+@if (!AllCrimes.Any())
+{
+    <div id="app">
+        <div style="position:fixed;top:50%;left:50%;margin-top:-50px; margin-left:-100px">
+            <img src="/images/1495.gif" alt="loading" />
+        </div>
+
+    </div>
+}
+else
+{
+    <div class="row mt-0 mb-5 ml-0 mr-0" style="border-radius:10px">
+        <div class="ml-0 mr-3" style="border: 10px; background-color: white">
+            <table class="filter ml-1 mr-3 mt-1">
+                <tr>
+                    <td>
+                        <h4 class="mt-0 mb-0 pr-2" style="color: #000000"><a class="fas fa-filter"></a></h4>
+                    </td>
+                    <td>
+                        <select name="types" id="Crimetypes" @onchange="FilterType">
+                            <option value="">--Clear Filter--</option>
+                            @foreach (var type in CrimeTypes)
+                            {
+                                <option value="@type.CrimeId">@type.Name</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        @foreach (var crime in AllCrimes)
+        {
+
+            var prov = CrimeProvinces.FirstOrDefault(p => p.ProvinceId == crime.Province_Id);
+            var city = CrimeCities.FirstOrDefault(c => c.CityId == crime.City_Id);
+            var sub = CrimeSuburbs.FirstOrDefault(s => s.SuburbId == crime.Suburb_Id);
+            var type = CrimeTypes.FirstOrDefault(t => t.CrimeId == crime.CrimeType_Id);
+
+            <div class="detail-crime col-lg-4 col-md-6">
+                <div class="card mb-1 mt-1">
+                    @if (type.Name == "Murder" || type.Name == "Rape")
+                    {
+                        <div class="card-header alert-danger text-center">
+                            <h3 class="pricing-headers">@type.Name</h3>
+                        </div>
+                        <div class="card-body text-center">
+                            <h2 class="pricing-h2">D/T: @crime.CrimeDate</h2>
+                            <p>Province: @prov.Name</p>
+                            <p>City: @city.Name</p>
+                            <p>Suburb: @sub.Name</p>
+                            <p>Street: @crime.Street</p>
+                            <p>Description: @crime.Description</p>
+                            <i class="fas fa-sad-cry fa-3x" style="color: #BD1616 "></i>
+                            <br />
+                        </div>
+                    }
+                    else
+                    {
+                        if (type.Name.Contains("Attempted"))
+                        {
+                            <div class="card-header alert-primary text-center">
+                                <h3 class="pricing-headers">@type.Name</h3>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="card-header alert-warning text-center">
+                                <h3 class="pricing-headers">@type.Name</h3>
+                            </div>
+                        }
+
+                        <div class="card-body text-center">
+                            <h2 class="pricing-h2">D/T: @crime.CrimeDate</h2>
+                            <p>Province: @prov.Name</p>
+                            <p>City: @city.Name</p>
+                            <p>Suburb: @sub.Name</p>
+                            <p>Street: @crime.Street</p>
+                            <p>Description: @crime.Description</p>
+                            @if (type.Name.Contains("Attempted"))
+                            {
+                                <i class="fas fa-frown fa-3x" style="color: #FA8072 "></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-sad-tear fa-3x" style="color: #000000"></i>
+                            }
+
+                            <br />
+                        </div>
+                    }
+
+                </div>
+            </div>
+        }
+
+    </div>
+}
+
+
+@code {
+
+    private IEnumerable<CrimeProvinceDTO> CrimeProvinces { get; set; } = new List<CrimeProvinceDTO>();
+    private IEnumerable<CrimeCityDTO> CrimeCities { get; set; } = new List<CrimeCityDTO>();
+    private IEnumerable<CrimeSuburbDTO> CrimeSuburbs { get; set; } = new List<CrimeSuburbDTO>();
+    private IEnumerable<CrimeTypeDTO> CrimeTypes { get; set; } = new List<CrimeTypeDTO>();
+    private IEnumerable<CrimeDetailDTO> AllCrimes { get; set; } = new List<CrimeDetailDTO>();
+
+    public int? FilterOneValue { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //CrimeDetails.CrimeDetail = new CrimeDetailDTO();
+
+        AllCrimes = await CrimeDetailService.GetAllCrimeDetails();
+        CrimeTypes = await ICrimeType.GetAllCrimeTypes();
+        CrimeProvinces = await ICrimeProvinceCitySuburb.GetAllCrimeProvinces();
+        CrimeCities = await ICrimeProvinceCitySuburb.GetAllCrimeCities();
+        CrimeSuburbs = await ICrimeProvinceCitySuburb.GetAllCrimeSuburbs();
+
+    }
+
+    private async Task FilterType(ChangeEventArgs e)
+    {
+
+
+        if (e.Value.ToString() != "")
+        {
+            FilterOneValue = int.Parse(e.Value.ToString());
+
+            AllCrimes = await CrimeDetailService.GetCrimeDetailsByTypeId((int)FilterOneValue);
+
+            await jsRuntime.ToastrSeccess("Filter applied");
+
+            if (!AllCrimes.Any())
+            {
+
+                await jsRuntime.ToastrError("No crimes available for the selected type");
+                AllCrimes = await CrimeDetailService.GetAllCrimeDetails();
+
+            }
+        }
+        else if (e.Value.ToString() == "")
+        {
+            FilterOneValue = null;
+            AllCrimes = await CrimeDetailService.GetAllCrimeDetails();
+            await jsRuntime.ToastrSeccess("Filter cleared");
+            StateHasChanged();
+        }
+    }
+}
