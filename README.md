@@ -8,9 +8,8 @@ Currently the core is fully functional still working on:
 - Limiting submissions per user 
 - Password reset
 - Crime notification system email or push notification
-- Design html css.
 - 3rd Party Auth / login
-- API Authorization
+
 
 ![Page1](https://user-images.githubusercontent.com/85226595/142839705-0ca1c26d-2659-4ef3-bea1-7b09aeee751c.png)
 ![Page2](https://user-images.githubusercontent.com/85226595/142839713-ec34a701-6a34-42e2-b31a-9adf8c965162.png)
