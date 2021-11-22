@@ -1,4 +1,5 @@
 ﻿using Business.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +11,7 @@ namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
     [Controller]
+    [Authorize]
     public class AllCrimeSuburbsController : Controller
     {
 
@@ -23,6 +25,7 @@ namespace CrimeLogger.Server.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllCrimeSuburbs()
         {
             var allSuburbs = await _crimeSuburbRepository.GetAllCrimeSuburbs();

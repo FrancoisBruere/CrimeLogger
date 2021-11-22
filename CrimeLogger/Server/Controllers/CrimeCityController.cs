@@ -1,10 +1,12 @@
 ﻿using Business.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
     [Controller]
+    [Authorize]
     public class CrimeCityController : Controller
     {
         private readonly ICrimeCityRepository _crimeCityRepository;

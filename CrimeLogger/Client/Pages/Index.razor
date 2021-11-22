@@ -2,7 +2,7 @@
 
 <PageTitle>CrimeLogger</PageTitle>
 
-<section class="colored-section" id="title">
+<div class="colored-section" id="title">
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-6">
@@ -17,10 +17,10 @@
 
 
     </div>
-   
-</section>
 
-<!-- Features -->
+</div>
+
+
 <section class="white-section" id="features">
     <div class="row">
         <div class="col-lg-3 justify-content-center text-center">
@@ -69,21 +69,15 @@
     </div>
 </section>
 
-
-
-
-
-
-<!-- Press -->
-<section class="colored-section" id="press">
+<div class="adds">
 
     <h3>Advertise Here<span class="far fa-hand-point-down fa-2x"></span></h3>
     <img class="press-logo" src="images/adds/HomePageAdd.png" alt="Advert">
 
-</section>
+</div>
 
-<!-- Pricing -->
-<section class="white-section" id="pricing">
+
+<div class="white-section" id="pricing">
 
     <h2 class="pricing-h2">A Plan for all</h2>
     <p class="para">A simple and affordable price plan</p>
@@ -100,34 +94,21 @@
                     <p>View Crime Map</p>
                     <p>View Crime Details</p>
                     <p>Receive Alert Email Notifications</p>
-                    <a href="crime/registration" type="button" class="btn btn-outline-dark btn-lg col-6 mx-auto">Register</a>
+                    <a href="/registration" type="button" class="btn btn-outline-dark btn-lg col-6 mx-auto">Register</a>
                 </div>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Call to Action -->
-<section class="colored-section" id="cta">
+</div>
+<div class="colored-section" id="cta">
 
     <h3 class="callfooter">Download the app today and make a difference.</h3>
     <div class="button-bottom">
         <button type="button" class="btn btn-dark btn-lg download-button-action"><span class="fab fa-apple"></span> Download</button>
         <button type="button" class="btn btn-light btn-lg download-button-action"><span class="fab fa-google-play"></span> Download</button>
     </div>
-</section>
-
-    <footer class="footer">
-        <div class="social" style="text-align:center">
-            <i class="fab-social fab fa-twitter mr-2"></i>
-            <i class="fab-social fab fa-facebook-f mr-2"></i>
-            <i class="fab-social fab fa-instagram mr-2"></i>
-            <i class="fab-social fas fa-envelope"></i>
-        </div>
-        <p class="paragraph-footer" style="text-align:center">©Copyright  2020 - @_copyRightDate crimelogger </p>
-
-    </footer>
+</div>
 
 @code {
-    public int _copyRightDate { get; set; } = DateTime.Now.Year;
+
 }

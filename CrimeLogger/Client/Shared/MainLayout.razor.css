@@ -2,18 +2,22 @@ h1, h2, h3, h4 {
     font-family: "Montserrat";
     font-weight: bold;
 }
-
-.white-section {
-    background-color: #fff;
-    justify-content: center;
+body {
+    font-family: "Montserrat";
+    font-weight: 500;
     text-align: center;
 }
-
-.callfooter {
-    padding: 5% 3% 2% 3%;
-    font-weight: bold;
-    font-size: 2.5rem;
-    text-align: center;
-    justify-content: center;
-    text-align: center;
+.footer {
+    background-color: #f9f9f9;
 }
+.paragraph-footer {
+    color: #8f8f8f;
+    height: 50px;
+    margin: 5px;
+}
+.fab-social {
+    padding-top:2em;
+    padding-right: 1rem;
+}
+
+

@@ -1,10 +1,12 @@
 ﻿using Business.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
     [Controller]
+    [Authorize]
     public class CrimeDetailByTypeController : Controller
     {
         private readonly ICrimeDetailRepository _crimeDetailRepository;
@@ -13,8 +15,9 @@ namespace CrimeLogger.Server.Controllers
         {
             _crimeDetailRepository = crimeDetailRepository;
         }
-        [HttpGet] //("{provinceId}")
 
+
+        [HttpGet] //("{provinceId}")
         public async Task<IActionResult> GetCrimesByTypeId(int? typeId)
         {
             if (typeId == null)
