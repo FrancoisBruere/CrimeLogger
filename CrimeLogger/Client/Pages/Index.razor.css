@@ -3,11 +3,12 @@
 }
 
 .master-heading {
-    font-size: 3.5rem;
-    line-height: 1.5;
+    line-height: 1.0;
     text-align: left;
     padding-top: 30px;
-    font-weight:bolder;
+    font-weight: bolder;
+    font-size: 2.5rem;
+    font-family: "Montserrat";
 }
 
 .container-fluid {
@@ -101,7 +102,6 @@
     padding: 3% 2%;
 }
 
-/* call to action */
 #cta {
     background-color: #FF2626;
     font-family: "Montserrat";
@@ -158,4 +158,7 @@
     background-color: #FF2626;
     color: #fff;
     text-align: center;
+    font-weight: bolder;
+    font-size: 2.5rem;
+    font-family: "Montserrat";
 }
