@@ -4,6 +4,7 @@ using CrimeLoggger_Server.Helper;
 using DataAccess.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -21,18 +22,22 @@ namespace CrimeLogger.Server.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-
+        private readonly IEmailSender _emailSender;
         private readonly APISettings _aPISettings;
 
         public AccountController(SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IOptions<APISettings> options)
+            IOptions<APISettings> options,
+            IEmailSender emailSender)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
             _aPISettings = options.Value;
+            _emailSender = emailSender;
+           
+           
         }
 
 
@@ -60,10 +65,30 @@ namespace CrimeLogger.Server.Controllers
 
                 IsEmailNotification = userRequestDTO.IsEmailNotification,
                 IsTermsAccepted = userRequestDTO.IsTermsAccepted,
-                EmailConfirmed = true  // Change to send to user with confirmation link
+                //EmailConfirmed = true  // Change to send to user with confirmation link
             };
 
             var result = await _userManager.CreateAsync(user, userRequestDTO.Password);
+
+            //Email Confirmation
+
+            try
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                var confirmationLink = Url.Link("Confirmation", new { token, email = user.Email });
+
+                //var confirmationLink = Url.Action(nameof("EmailController"),"ConfirmEmail", new { token, email = user.Email }, Request.Scheme);
+
+                await _emailSender.SendEmailAsync(user.Email, "Account Confirmation Link - CrimeLogger",
+                $"Please use the link provided to confirm your email address in order to activate your account: {confirmationLink}");
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+           
 
             if (!result.Succeeded)
             {
@@ -100,7 +125,7 @@ namespace CrimeLogger.Server.Controllers
                         ErrorMessage = "Invalid Authentication"
                     });
                 }
-
+                
                 // Valid account
 
                 var signinCredentials = GetSigningCredentials();
@@ -130,6 +155,18 @@ namespace CrimeLogger.Server.Controllers
             }
             else
             {
+                // Check if user email is confirmed 
+                var user = await _userManager.FindByNameAsync(authenticationDTO.UserName);
+
+                if (user.EmailConfirmed == false)
+                {
+                    return Unauthorized(new AuthenticationResponseDTO
+                    {
+                        isAuthSuccessful = false,
+                        ErrorMessage = "Email not confirmed"
+                    });
+                }
+
                 return Unauthorized(new AuthenticationResponseDTO
                 {
                     isAuthSuccessful = false,

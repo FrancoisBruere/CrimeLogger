@@ -1,27 +1,27 @@
 using Business.Repository;
 using Business.Repository.IRepository;
+using CrimeLogger.Server.Helper;
 using CrimeLoggger_Server.Helper;
 using DataAccess.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
 using System.Text;
-using CrimeLogger.Client.Service;
-using CrimeLogger.Client.Service.IService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllersWithViews();
-
 
 var appSettingSection = builder.Configuration.GetSection("APISettings");
 builder.Services.Configure<APISettings>(appSettingSection);
+
+builder.Services.Configure<MailJetSettings>(builder.Configuration.GetSection("MailJetSettings"));
+
+
 var apiSettings = appSettingSection.Get<APISettings>(); // pupulate key
 var key = Encoding.ASCII.GetBytes(apiSettings.SecretKey);
 
@@ -44,7 +44,7 @@ builder.Services.AddAuthentication(opt =>
         ValidIssuer = apiSettings.ValidIssuer,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
-       
+
     };
 });
 
@@ -52,9 +52,14 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.Configure<IdentityOptions>(opt =>
+{
+    opt.User.RequireUniqueEmail = true;
+    opt.SignIn.RequireConfirmedEmail = true;
+    // opt.Password.RequiredLength = 8;
 
+});
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICrimeDetailRepository, CrimeDetailRepository>();
@@ -64,8 +69,18 @@ builder.Services.AddScoped<ICrimeSuburbRepository, CrimeSuburbRepository>();
 builder.Services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
 
 
-builder.Services.AddRouting(option => option.LowercaseUrls = true);
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+
+//builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+//builder.Services.AddScoped<IUrlHelper>(x => {
+//    var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
+//    var factory = x.GetRequiredService<IUrlHelperFactory>();
+//    return factory.GetUrlHelper(actionContext);
+//});
+
+
+builder.Services.AddRouting(option => option.LowercaseUrls = true);
 
 var app = builder.Build();
 
@@ -90,7 +105,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.UseEndpoints(endpoints =>
 {

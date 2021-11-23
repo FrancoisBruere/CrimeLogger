@@ -17,6 +17,7 @@ namespace CrimeLogger.Server.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCrimeSuburbsByCityId(int? cityId) 
         {
             if (cityId == null)
