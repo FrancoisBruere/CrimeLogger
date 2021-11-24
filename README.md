@@ -9,6 +9,7 @@ Currently the core is fully functional still working on:
 - Password reset
 - Crime notification system email or push notification
 - 3rd Party Auth / login
+- HTML Design css
 
 
 ![Page1](https://user-images.githubusercontent.com/85226595/142839705-0ca1c26d-2659-4ef3-bea1-7b09aeee751c.png)
