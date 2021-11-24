@@ -6,7 +6,6 @@ using DataAccess.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -69,32 +68,26 @@ builder.Services.AddScoped<ICrimeSuburbRepository, CrimeSuburbRepository>();
 builder.Services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
 
 
+
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-
-
-//builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-//builder.Services.AddScoped<IUrlHelper>(x => {
-//    var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
-//    var factory = x.GetRequiredService<IUrlHelperFactory>();
-//    return factory.GetUrlHelper(actionContext);
-//});
 
 
 builder.Services.AddRouting(option => option.LowercaseUrls = true);
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
-    app.UseWebAssemblyDebugging();
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    {
+        app.UseWebAssemblyDebugging();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
 
 app.UseHttpsRedirection();
 

@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace CrimeLogger.Server.Helper
 {
-    public class EmailSender:IEmailSender
+    public class EmailSender : IEmailSender
     {
         private readonly MailJetSettings _mailJetSettings;
 
@@ -30,24 +30,24 @@ namespace CrimeLogger.Server.Helper
             }
                .Property(Send.Messages, new JArray {
                 new JObject {
-                 {"From", new JObject {
-                  {"Email", _mailJetSettings.Email},
-                  {"Name", "CrimeLogger"}
-                  }},
-                 {"To", new JArray {
-                  new JObject {
-                   {"Email", email},
-                   {"Name", ""}
-                   }
-                  }},
-                 {"Subject", subject},
-                 {"TextPart", "........."},
-                 {"HTMLPart", htmlMessage}
-                 }
-                   });
+                {"From", new JObject {
+                {"Email", _mailJetSettings.Email},
+                {"Name", "CrimeLogger"}
+                }},
+                {"To", new JArray {
+                new JObject {
+                {"Email", email},
+                {"Name", ""}
+                }
+                }},
+                {"Subject", subject},
+                {"TextPart", "........."},
+                {"HTMLPart", htmlMessage}
+                }
+                });
             MailjetResponse response = await client.PostAsync(request);
         }
 
-        
+
     }
 }

@@ -18,7 +18,12 @@ builder.Services.AddScoped<ICrimeTypeService, CrimeTypeService>();
 builder.Services.AddScoped<ICrimeDetailService, CrimeDetailService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+
+    
+ 
+
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
+
 
 await builder.Build().RunAsync();

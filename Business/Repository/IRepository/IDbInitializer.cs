@@ -1,4 +1,4 @@
-﻿namespace CrimeLogger.Client.Service.IService
+﻿namespace Business.Repository.IRepository
 {
     public interface IDbInitializer
     {

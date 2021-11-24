@@ -1,10 +1,9 @@
 ﻿using Common;
-using CrimeLogger.Client.Service.IService;
 using DataAccess.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace CrimeLogger.Client.Service
+namespace Business.Repository.IRepository
 {
     public class DbInitializer : IDbInitializer
     {

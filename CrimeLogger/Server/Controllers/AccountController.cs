@@ -81,7 +81,7 @@ namespace CrimeLogger.Server.Controllers
                 //var confirmationLink = Url.Action(nameof("EmailController"),"ConfirmEmail", new { token, email = user.Email }, Request.Scheme);
 
                 await _emailSender.SendEmailAsync(user.Email, "Account Confirmation Link - CrimeLogger",
-                $"Please use the link provided to confirm your email address in order to activate your account: {confirmationLink}");
+                $"Please confirm your account by clicking <a href=\"" + confirmationLink + "\">here</a>");
             }
             catch (Exception ex)
             {
