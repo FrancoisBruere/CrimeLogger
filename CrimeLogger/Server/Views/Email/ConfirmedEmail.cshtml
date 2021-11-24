@@ -1,6 +1,8 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Components
+@{
     ViewData["Title"] = "confirmedemail";
 }
+@inject NavigationManager NavigationManager
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +23,10 @@
                 Welcome to CrimeLogger.
             </h3>
             <div>
-                <p>Thank you for confirming your email. You may login now.</p>
+                <p>Thank you for confirming your email.
+                    
+                    @*@Html.ActionLink("Click here to Log in", "", "", routeValues: null, htmlAttributes: new { id = "loginLink" })*@
+                </p>
             </div>
         </div>
     </div>
@@ -32,4 +37,6 @@
 </html>
 
 @{
+   
+
 }

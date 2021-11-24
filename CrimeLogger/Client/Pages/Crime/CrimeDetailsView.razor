@@ -10,7 +10,7 @@
 @inject NavigationManager NavigationManager
 
 @attribute [Authorize(Roles = SD.Role_User)]
-
+<PageTitle>Detail View</PageTitle>
 @if (!AllCrimes.Any())
 {
     <div id="app">

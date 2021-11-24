@@ -13,7 +13,7 @@
 
 @attribute [Authorize(Roles = SD.Role_User)]
 
-<PageTitle>Submitting-Crimes</PageTitle>
+<PageTitle>Submit-Crime</PageTitle>
 @if (CrimeDetailModel == null)
 {
     <div><img src="/images/1495.gif" alt="loading" style="place-content:center" /><p>Loading.....</p></div>
@@ -323,7 +323,7 @@ else
         }
 
 
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/crime/detail");
     }
 
 

@@ -56,9 +56,12 @@ builder.Services.Configure<IdentityOptions>(opt =>
 {
     opt.User.RequireUniqueEmail = true;
     opt.SignIn.RequireConfirmedEmail = true;
-    // opt.Password.RequiredLength = 8;
+    opt.Password.RequiredLength = 8;
+    
 
 });
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+                 opt.TokenLifespan = TimeSpan.FromDays(2));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICrimeDetailRepository, CrimeDetailRepository>();
