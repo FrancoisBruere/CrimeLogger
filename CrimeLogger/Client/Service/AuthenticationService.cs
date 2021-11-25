@@ -22,6 +22,20 @@ namespace CrimeLogger.Client.Service
             _localStorage = localStorage;
             _authStateProvider = authStateProvider;
         }
+
+        public async Task<ForgotPasswordDTO> ForgotPassword(ForgotPasswordDTO userForReset)
+        {
+            var content = JsonConvert.SerializeObject(userForReset);
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("api/account/ForgotPassword", bodyContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return userForReset;
+            }
+            return null;
+        }
+
         public async Task<AuthenticationResponseDTO> Login(AuthenticationDTO userForAuthentication)
         {
             var content = JsonConvert.SerializeObject(userForAuthentication);

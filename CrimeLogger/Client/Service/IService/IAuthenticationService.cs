@@ -6,6 +6,7 @@ namespace CrimeLogger.Client.Service.IService
     {
         Task<RegistrationResponseDTO> RegisterUser(UserRequestDTO userForRegistration);
         Task<AuthenticationResponseDTO> Login(AuthenticationDTO userForAuthentication);
+        Task<ForgotPasswordDTO> ForgotPassword(ForgotPasswordDTO userForReset);
         Task Logout();
 
     }

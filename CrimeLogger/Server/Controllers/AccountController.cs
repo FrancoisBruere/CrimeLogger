@@ -201,5 +201,82 @@ namespace CrimeLogger.Server.Controllers
             return claims;
         }
 
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult ForgotPassword()
+        //{
+        //    return View();
+        //}
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
+        {
+            if (!ModelState.IsValid)
+                return View(forgotPasswordDTO);
+            var user = await _userManager.FindByEmailAsync(forgotPasswordDTO.Email);
+            if (user == null)
+             // return StatusCode(StatusCodes.Status404NotFound, "User Not Found");
+            return RedirectToPage("/forgotpassword");
+            // return RedirectToAction(nameof(ForgotPasswordConfirmation));
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callback = Url.Action(nameof(ResetPasswordLink), "Account", new { token, email = user.Email }, Request.Scheme);
+
+            //var confirmationLink = Url.Link("Confirmation", new { token, email = user.Email });
+            await _emailSender.SendEmailAsync(user.Email, "Reset password Link - CrimeLogger",
+               $"Please reset your password by clicking <a href=\"" + callback + "\">here</a>");
+
+            return Ok();
+            //return View("ForgotPasswordConfirmation");
+
+            // return RedirectToAction(nameof(ForgotPasswordConfirmation));
+        }
+       
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPasswordLink(string token, string email)
+        {
+            var model = new ResetPasswordDTO { Token = token, Email = email };
+            return View(model);
+
+            //return RedirectToPage("/resetpasswordlink",model);
+           // return StatusCode(StatusCodes.Status500InternalServerError, "Oops! Something went wrong!");
+
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        
+        // [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword([FromHeader] ResetPasswordDTO resetPasswordModel)
+        {
+            if (!ModelState.IsValid)
+                return View(resetPasswordModel);
+            var user = await _userManager.FindByEmailAsync(resetPasswordModel.Email);
+            if (user == null)
+                return RedirectToPage("/forgotpassword");
+            //RedirectToAction(nameof(ResetPasswordConfirmation));
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.Password);
+            if (!resetPassResult.Succeeded)
+            {
+                foreach (var error in resetPassResult.Errors)
+                {
+                    ModelState.TryAddModelError(error.Code, error.Description);
+                }
+                return View();
+            }
+           
+            return RedirectToAction(nameof(ResetPasswordConfirmation));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
     }
 }
