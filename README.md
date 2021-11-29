@@ -7,7 +7,6 @@ Currently the core is fully functional still working on:
 
 - Limit submissions per user 
 - Crime notification system email or push notification
-- 3rd Party Auth / login rather going to implement two-factor Authentication
 - HTML Design css
 
 
