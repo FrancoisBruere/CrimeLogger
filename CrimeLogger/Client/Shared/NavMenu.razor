@@ -10,7 +10,7 @@
                     <AuthorizeView>
                         <Authorized>
                             <li class="nav-item p-0">
-                                <NavLink class="nav-link" href="#">
+                                <NavLink class="nav-link" href="/crime/profilemanager">
                                     <span class="p-2">
                                         Hello, @context.User.Identity.Name!
                                     </span>
@@ -24,6 +24,9 @@
                             </li>
                             <li class="nav-item">
                                 <NavLink class="nav-link" href="/crime/submit">Submit</NavLink>
+                            </li>
+                            <li class="nav-item">
+                                <NavLink class="nav-link" href="/crime/profilemanager">Profile</NavLink>
                             </li>
                             <li class="nav-item p-0">
                                 <NavLink class="nav-link" href="logout">

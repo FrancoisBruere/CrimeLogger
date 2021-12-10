@@ -2,6 +2,7 @@
 using CrimeLogger.Shared;
 using CrimeLoggger_Server.Helper;
 using DataAccess.Data;
+using Google.Authenticator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -43,7 +44,6 @@ namespace CrimeLogger.Server.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-
         public async Task<IActionResult> SignUp([FromBody] UserRequestDTO userRequestDTO)
         {
             if (userRequestDTO == null || !ModelState.IsValid)
@@ -110,7 +110,6 @@ namespace CrimeLogger.Server.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-
         public async Task<IActionResult> SignIn([FromBody] AuthenticationDTO authenticationDTO)
         {
             var result = await _signInManager.PasswordSignInAsync(authenticationDTO.UserName, authenticationDTO.Password, false, false);
@@ -201,13 +200,7 @@ namespace CrimeLogger.Server.Controllers
             return claims;
         }
 
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public IActionResult ForgotPassword()
-        //{
-        //    return View();
-        //}
-
+   
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
@@ -223,14 +216,12 @@ namespace CrimeLogger.Server.Controllers
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callback = Url.Action(nameof(ResetPasswordLink), "Account", new { token, email = user.Email }, Request.Scheme);
 
-            //var confirmationLink = Url.Link("Confirmation", new { token, email = user.Email });
+           
             await _emailSender.SendEmailAsync(user.Email, "Reset password Link - CrimeLogger",
                $"Please reset your password by clicking <a href=\"" + callback + "\">here</a>");
 
             return Ok();
-            //return View("ForgotPasswordConfirmation");
-
-            // return RedirectToAction(nameof(ForgotPasswordConfirmation));
+          
         }
        
 
@@ -240,16 +231,10 @@ namespace CrimeLogger.Server.Controllers
         {
             var model = new ResetPasswordDTO { Token = token, Email = email };
             return View(model);
-
-            //return RedirectToPage("/resetpasswordlink",model);
-           // return StatusCode(StatusCodes.Status500InternalServerError, "Oops! Something went wrong!");
-
         }
 
         [HttpPost]
         [AllowAnonymous]
-        
-        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword([FromHeader] ResetPasswordDTO resetPasswordModel)
         {
             if (!ModelState.IsValid)
@@ -257,7 +242,7 @@ namespace CrimeLogger.Server.Controllers
             var user = await _userManager.FindByEmailAsync(resetPasswordModel.Email);
             if (user == null)
                 return RedirectToPage("/forgotpassword");
-            //RedirectToAction(nameof(ResetPasswordConfirmation));
+            
             var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.Password);
             if (!resetPassResult.Succeeded)
             {
@@ -278,5 +263,6 @@ namespace CrimeLogger.Server.Controllers
             return View();
         }
 
+       
     }
 }

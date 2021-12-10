@@ -52,8 +52,6 @@ namespace CrimeLogger.Client.Service
                 await _localStorage.SetItemAsync(SD.Local_UserDetails, result.UserDTO);
                 ((AuthStateProvider)_authStateProvider).NotifyUserLoggedIn(result.Token);//convert Authstate and call notifyUSerlogin
 
-
-
                 //add bearer token
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
 
@@ -81,14 +79,14 @@ namespace CrimeLogger.Client.Service
         {
             var content = JsonConvert.SerializeObject(userForRegistration);
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
-            var responce = await _client.PostAsync("api/account/signup", bodyContent);
+            var response = await _client.PostAsync("api/account/signup", bodyContent);
 
 
-            var contentTemp = await responce.Content.ReadAsStringAsync();
+            var contentTemp = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<RegistrationResponseDTO>(contentTemp);
 
 
-            if (responce.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 return new RegistrationResponseDTO { isRegistrationSuccessful = true };
             }

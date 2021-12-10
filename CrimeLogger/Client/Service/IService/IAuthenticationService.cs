@@ -8,6 +8,6 @@ namespace CrimeLogger.Client.Service.IService
         Task<AuthenticationResponseDTO> Login(AuthenticationDTO userForAuthentication);
         Task<ForgotPasswordDTO> ForgotPassword(ForgotPasswordDTO userForReset);
         Task Logout();
-
+    
     }
 }

@@ -36,8 +36,6 @@ namespace CrimeLogger.Shared
         [Range(typeof(bool), "true", "true", ErrorMessage = "Accept terms and conditions")]
         public bool IsTermsAccepted { get; set; }
 
-
-
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; }

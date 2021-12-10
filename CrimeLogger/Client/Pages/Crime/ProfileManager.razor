@@ -1,0 +1,27 @@
+﻿@page "/crime/profilemanager"
+
+@using CrimeLogger.Shared
+
+@inject IAuthenticationService authenticationService
+
+<h3>ProfileManager</h3>
+
+<div>
+   @* <RadzenCheckBox @bind-Value="userRequest.TwoFactorEnabled" @onchange="HandleTwoFactor">Enable two-factor Authentication</RadzenCheckBox>*@
+    <button @onclick="HandleTwoFactor" class="btn btn-primary">2fa</button>
+</div>
+
+
+
+@code {
+
+    UserDTO user = new UserDTO();
+
+    private void HandleTwoFactor()
+    {
+
+        
+
+    }
+
+}
