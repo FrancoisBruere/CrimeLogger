@@ -3,7 +3,9 @@
 @using CrimeLogger.Shared
 @using Microsoft.AspNetCore.Authorization
 
+
 @inject IAuthenticationService authenticationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IUserUpdateService UserUpdateService
 @inject ILocalStorageService _localSorageService
 @inject NavigationManager NavigationManager
@@ -133,8 +135,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-        UserForUpdateDTO = await UserUpdateService.GetUserForUpdate("samm@sam.com");
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        UserForUpdateDTO = await UserUpdateService.GetUserForUpdate(user.Identity.Name);
         CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
         CrimeCities = await CrimeProvinceCitySuburbService.GetCityDetailsByProvinceId(UserForUpdateDTO.ProvinceId);
         CrimeSuburbs = await CrimeProvinceCitySuburbService.GetSuburbDetailsByCityId(UserForUpdateDTO.CityId);
