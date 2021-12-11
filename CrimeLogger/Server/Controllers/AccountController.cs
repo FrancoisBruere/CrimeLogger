@@ -157,6 +157,15 @@ namespace CrimeLogger.Server.Controllers
                 // Check if user email is confirmed 
                 var user = await _userManager.FindByNameAsync(authenticationDTO.UserName);
 
+                if (user == null)
+                {
+                    return Unauthorized(new AuthenticationResponseDTO
+                    {
+                        isAuthSuccessful = false,
+                        ErrorMessage = "Invalid Authentication"
+                    });
+                }
+
                 if (user.EmailConfirmed == false)
                 {
                     return Unauthorized(new AuthenticationResponseDTO
