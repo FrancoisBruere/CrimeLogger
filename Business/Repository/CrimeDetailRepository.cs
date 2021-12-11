@@ -2,6 +2,7 @@
 using Business.Repository.IRepository;
 using CrimeLogger.Shared;
 using DataAccess.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,17 +16,20 @@ namespace Business.Repository
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CrimeDetailRepository(ApplicationDbContext db, IMapper mapper)
+        public CrimeDetailRepository(ApplicationDbContext db, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         public async Task<CrimeDetailDTO> CreateCrime(CrimeDetailDTO crimeDetailDTO)
         {
+            
             CrimeDetail crimeDetail = _mapper.Map<CrimeDetailDTO, CrimeDetail>(crimeDetailDTO);
-            crimeDetail.CreatedBy = "Developer";
+            crimeDetail.CreatedBy = crimeDetailDTO.CreatedBy;
             crimeDetail.CreatedDate = DateTime.Now;
 
             var addedCrimeDetail = await _db.CrimeDetails.AddAsync(crimeDetail);

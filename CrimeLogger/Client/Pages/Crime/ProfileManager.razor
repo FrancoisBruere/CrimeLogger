@@ -1,27 +1,206 @@
 ﻿@page "/crime/profilemanager"
 
 @using CrimeLogger.Shared
+@using Microsoft.AspNetCore.Authorization
 
 @inject IAuthenticationService authenticationService
+@inject IUserUpdateService UserUpdateService
+@inject ILocalStorageService _localSorageService
+@inject NavigationManager NavigationManager
+@inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
+@inject IJSRuntime JsRuntime
 
-<h3>ProfileManager</h3>
+@attribute [Authorize(Roles = SD.Role_User)]
+<PageTitle>Profile</PageTitle>
 
-<div>
-   @* <RadzenCheckBox @bind-Value="userRequest.TwoFactorEnabled" @onchange="HandleTwoFactor">Enable two-factor Authentication</RadzenCheckBox>*@
-    <button @onclick="HandleTwoFactor" class="btn btn-primary">2fa</button>
-</div>
+<PageTitle>Manage Profile</PageTitle>
+<EditForm Model="UserForUpdateDTO" OnValidSubmit="UpdateUser" class="pt-4">
+    <DataAnnotationsValidator />
+    <div class="py-4">
+        <div class=" row form-group ">
+            <div class="col-6 offset-3 ">
+                <div class="card border">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-black text-center py-2">
+                            <strong>Update Details</strong>
+                        </h3>
+
+                        @if (ShowRegistrationErrors)
+                        {
+                            <div>
+                                @foreach (var error in Errors)
+                                {
+                                    <p class="text-danger text-center">@error</p>
+                                }
+                            </div>
+                        }
+                        <label>Phone Number</label>
+                        <div class="input-group py-1">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"> +27</span>
+                            </div>
+                            <InputText @bind-Value="UserForUpdateDTO.PhoneNumber" class="form-control" placeholder="Phone number" />
+                        </div>
+                        <div class="py-1">
+                            <label>Province</label>
+                            <InputSelect @bind-Value="UserForUpdateDTO.ProvinceId" @oninput="CityChange" class="form-control">
+                                <option value="">-- Select Province --</option>
+                                @foreach (var prov in CrimeProvinces)
+                                {
+
+                                    <option value="@prov.ProvinceId">@prov.Name</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => UserForUpdateDTO.ProvinceId" />
+                        </div>
+                        <div class="py-1">
+                            <label>City</label>
+                            <InputSelect @bind-Value="UserForUpdateDTO.CityId" @oninput="SuburbChange" class="form-control">
+                                <option value="">-- Select City --</option>
+                                @if (CrimeCities.Count() > 0)
+                                {
+                                    @foreach (var city in CrimeCities)
+                                    {
+                                        <option value="@city.CityId">@city.Name</option>
+                                    }
+
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => UserForUpdateDTO.CityId" />
+                        </div>
+                        <div class="py-1">
+                            <label>Suburb</label>
+                            <InputSelect @bind-Value="UserForUpdateDTO.SuburbId" class="form-control">
+                                <option value="">-- Select Suburb --</option>
+                                @foreach (var suburb in CrimeSuburbs)
+                                {
+                                    suburbIdSelected = suburb.SuburbId;
+                                    <option value="@suburb.SuburbId">@suburb.Name</option>}
+
+                            </InputSelect>
+                            <ValidationMessage For="() => UserForUpdateDTO.SuburbId" />
+                        </div>
+                        <div class="py-1">
+                            <label>Street</label>
+                            <InputText @bind-Value="UserForUpdateDTO.StreetName" class="form-control" placeholder="Street..." />
+                            <ValidationMessage For="()=>UserForUpdateDTO.StreetName" />
+                        </div>
+                        <div class="py-1 row col-md-12" style="margin-left:5px;">
+                               Receive crime email notifications:<RadzenSwitch @bind-Value="UserForUpdateDTO.IsEmailNotification" Change="UpdateEmailNotification" class="form-control" Style="margin-top:1px; width:50px; margin-left:5px" />                      
+                        </div>
+                        
+
+                        <hr style="background-color:aliceblue" />
+                        <div class="py-2">
+                            @if (IsProcessing)
+                            {
+                                <button type="submit" class="btn btn-outline-dark btn-block disabled"><i class="fas fa-sign-in-alt"></i> Please Wait....</button>
+
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-outline-dark btn-block"><i class="fas fa-sign-in-alt"></i> Update</button>
+                                
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</EditForm>
 
 
 
 @code {
 
-    UserDTO user = new UserDTO();
+    public UserUpdateDTO UserForUpdateDTO = new UserUpdateDTO();
+    public bool IsProcessing { get; set; }
+    public bool ShowRegistrationErrors { get; set; }
+    private int? provinceIdSelected { get; set; }
+    private int? cityIdSelected { get; set; }
+    private int? suburbIdSelected { get; set; }
 
-    private void HandleTwoFactor()
+    public IEnumerable<string> Errors { get; set; }
+
+    private IEnumerable<CrimeProvinceDTO> CrimeProvinces { get; set; } = new List<CrimeProvinceDTO>();
+    private IEnumerable<CrimeCityDTO> CrimeCities { get; set; } = new List<CrimeCityDTO>();
+    private IEnumerable<CrimeSuburbDTO> CrimeSuburbs { get; set; } = new List<CrimeSuburbDTO>();
+
+    protected override async Task OnInitializedAsync()
     {
 
-        
-
+        UserForUpdateDTO = await UserUpdateService.GetUserForUpdate("samm@sam.com");
+        CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
+        CrimeCities = await CrimeProvinceCitySuburbService.GetCityDetailsByProvinceId(UserForUpdateDTO.ProvinceId);
+        CrimeSuburbs = await CrimeProvinceCitySuburbService.GetSuburbDetailsByCityId(UserForUpdateDTO.CityId);
     }
 
+
+
+    private async Task UpdateUser()
+    {
+        ShowRegistrationErrors = false;
+        IsProcessing = true;
+
+        var result = await UserUpdateService.UpdateUserDetails(UserForUpdateDTO);
+
+        if(result != null)
+        {
+            IsProcessing = false;
+            await JsRuntime.ToastrSeccess("Profile updated successfully!");
+        }
+        else
+        {
+            IsProcessing = false;
+            await JsRuntime.ToastrError("OOPS! Something went wrong please try again");
+        }
+    }
+
+    private async Task CityChange(ChangeEventArgs args)
+    {
+
+        if (args.Value == null)
+        {
+            provinceIdSelected = null;
+            await JsRuntime.ToastrError("OOPS! Something went wrong please try again");
+        }
+        else
+        {
+
+            provinceIdSelected = Convert.ToInt32(args.Value);
+
+            CrimeCities = await CrimeProvinceCitySuburbService.GetCityDetailsByProvinceId(provinceIdSelected.Value);
+        }
+    }
+
+
+    private async Task SuburbChange(ChangeEventArgs args)
+    {
+
+        if (args.Value == null)
+        {
+            cityIdSelected = UserForUpdateDTO.SuburbId;
+            await JsRuntime.ToastrError("OOPS! Something went wrong please try again");
+
+        }
+        else
+        {
+
+            cityIdSelected = Convert.ToInt32(args.Value);
+
+            CrimeSuburbs = await CrimeProvinceCitySuburbService.GetSuburbDetailsByCityId(cityIdSelected.Value);
+        }
+    }
+
+    private async Task UpdateEmailNotification()
+    {
+        var emailNotice = UserForUpdateDTO.IsEmailNotification ? true : false;
+        UserForUpdateDTO.IsEmailNotification = emailNotice;
+        await UpdateUser();
+    }
 }

@@ -17,7 +17,7 @@ namespace CrimeLogger.Server.Controllers
         }
 
 
-        [HttpGet] //("{provinceId}")
+        [HttpGet]
         public async Task<IActionResult> GetCrimesByTypeId(int? typeId)
         {
             if (typeId == null)

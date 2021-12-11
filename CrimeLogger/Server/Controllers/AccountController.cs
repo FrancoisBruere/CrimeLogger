@@ -126,7 +126,7 @@ namespace CrimeLogger.Server.Controllers
                 }
                 
                 // Valid account
-
+                
                 var signinCredentials = GetSigningCredentials();
                 var claims = await GetClaims(user);
 

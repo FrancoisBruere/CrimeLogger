@@ -21,6 +21,7 @@ namespace Business.Mapper
             CreateMap<CrimeType, CrimeTypeDTO>().ReverseMap();
             CreateMap<CrimeDetail, CrimeDetailDTO>().ReverseMap();
             
+            
         }
     }
 }

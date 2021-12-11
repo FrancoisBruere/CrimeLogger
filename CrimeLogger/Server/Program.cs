@@ -56,7 +56,7 @@ builder.Services.Configure<IdentityOptions>(opt =>
 {
     opt.User.RequireUniqueEmail = true;
     opt.SignIn.RequireConfirmedEmail = true;
-    opt.Password.RequiredLength = 8;
+    opt.Password.RequiredLength = 6;
     
 
 });
@@ -69,6 +69,7 @@ builder.Services.AddScoped<ICrimeProvinceRepository, CrimeProvinceRepository>();
 builder.Services.AddScoped<ICrimeCityRepository, CrimeCityRepository>();
 builder.Services.AddScoped<ICrimeSuburbRepository, CrimeSuburbRepository>();
 builder.Services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
+builder.Services.AddScoped<IUserUpdateRepository, UserUpdateRepository>();
 
 
 
