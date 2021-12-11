@@ -5,7 +5,10 @@ Crime Logger WASM Blazor - ServerAPI  - SqLiteDB - .Net6 - Using Identity - JWT 
 Application allows registered users to log crimes. MapMarkers are placed at crime locations by Geocoding address to lat and long cords storing in sqlite with crime type and the dates crimes committed. DetailsView for viewing crime detail with filter to filter by crime type.
 Currently the core is fully functional still working on:
 
-- Limit submissions per user 
+- Add user profile update page for address contact number and email notification enable disable
+- check bug with user account validation
+- check bug with JWT Bearer token - does not allow api calls after closing browser and opening
+- Limit crime submissions per user 
 - Crime notification system email or push notification
 - HTML Design css
 
