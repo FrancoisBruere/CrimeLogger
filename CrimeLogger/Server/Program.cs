@@ -1,5 +1,6 @@
 using Business.Repository;
 using Business.Repository.IRepository;
+using CrimeLogger.Server;
 using CrimeLogger.Server.Helper;
 using CrimeLoggger_Server.Helper;
 using DataAccess.Data;
@@ -50,7 +51,7 @@ builder.Services.AddAuthentication(opt =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-           options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.Configure<IdentityOptions>(opt =>

@@ -1,4 +1,5 @@
 ﻿using Common;
+using CrimeLogger.Server.Helper;
 using CrimeLogger.Shared;
 using CrimeLoggger_Server.Helper;
 using DataAccess.Data;
@@ -12,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+
 
 namespace CrimeLogger.Server.Controllers
 {
@@ -37,8 +39,7 @@ namespace CrimeLogger.Server.Controllers
             _roleManager = roleManager;
             _aPISettings = options.Value;
             _emailSender = emailSender;
-           
-           
+
         }
 
 
@@ -51,60 +52,63 @@ namespace CrimeLogger.Server.Controllers
                 return BadRequest();
             }
 
-            var user = new ApplicationUser
-            {
-                UserName = userRequestDTO.Email,
-                Email = userRequestDTO.Email,
+                var user = new ApplicationUser
+                {
+                    UserName = userRequestDTO.Email,
+                    Email = userRequestDTO.Email,
 
-                ProvinceId = (int)userRequestDTO.ProvinceId,
-                CityId = (int)userRequestDTO.CityId,
-                SuburbId = (int)userRequestDTO.SuburbId,
-                StreetName = userRequestDTO.StreetName,
+                    ProvinceId = (int)userRequestDTO.ProvinceId,
+                    CityId = (int)userRequestDTO.CityId,
+                    SuburbId = (int)userRequestDTO.SuburbId,
+                    StreetName = userRequestDTO.StreetName,
 
-                PhoneNumber = userRequestDTO.PhoneNo,
+                    PhoneNumber = userRequestDTO.PhoneNo,
 
-                IsEmailNotification = userRequestDTO.IsEmailNotification,
-                IsTermsAccepted = userRequestDTO.IsTermsAccepted,
-                //EmailConfirmed = true  // Change to send to user with confirmation link
-            };
+                    IsEmailNotification = userRequestDTO.IsEmailNotification,
+                    IsTermsAccepted = userRequestDTO.IsTermsAccepted,
+                    //EmailConfirmed = true  // Change to send to user with confirmation link
+                };
 
-            var result = await _userManager.CreateAsync(user, userRequestDTO.Password);
+                var result = await _userManager.CreateAsync(user, userRequestDTO.Password);
 
-            //Email Confirmation
+                //Email Confirmation
 
-            try
-            {
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                try
+                {
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                var confirmationLink = Url.Link("Confirmation", new { token, email = user.Email });
+                    var confirmationLink = Url.Link("Confirmation", new { token, email = user.Email });
 
-                //var confirmationLink = Url.Action(nameof("EmailController"),"ConfirmEmail", new { token, email = user.Email }, Request.Scheme);
+                    //var confirmationLink = Url.Action(nameof("EmailController"),"ConfirmEmail", new { token, email = user.Email }, Request.Scheme);
 
-                await _emailSender.SendEmailAsync(user.Email, "Account Confirmation Link - CrimeLogger",
-                $"Please confirm your account by clicking <a href=\"" + confirmationLink + "\">here</a>");
-            }
-            catch (Exception ex)
-            {
+                    await _emailSender.SendEmailAsync(user.Email, "Account Confirmation Link - CrimeLogger",
+                    $"Please confirm your account by clicking <a href=\"" + confirmationLink + "\">here</a>");
+                }
+                catch (Exception ex)
+                {
 
-                throw new Exception(ex.Message);
-            }
-           
+                    throw new Exception(ex.Message);
+                }
 
-            if (!result.Succeeded)
-            {
-                var errors = result.Errors.Select(e => e.Description);
-                return BadRequest(new RegistrationResponseDTO { Errors = errors, isRegistrationSuccessful = false });
-            }
 
-            var roleResult = await _userManager.AddToRoleAsync(user, SD.Role_User);
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description);
+                    return BadRequest(new RegistrationResponseDTO { Errors = errors, isRegistrationSuccessful = false });
+                }
 
-            if (!roleResult.Succeeded)
-            {
-                var errors = result.Errors.Select(e => e.Description);
-                return BadRequest(new RegistrationResponseDTO { Errors = errors, isRegistrationSuccessful = false });
-            }
+                var roleResult = await _userManager.AddToRoleAsync(user, SD.Role_User);
 
-            return StatusCode(201);
+                if (!roleResult.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description);
+                    return BadRequest(new RegistrationResponseDTO { Errors = errors, isRegistrationSuccessful = false });
+                }
+
+                return StatusCode(201);
+
+        
+
 
         }
 

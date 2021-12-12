@@ -1,6 +1,8 @@
 ﻿@page "/registration"
 @using CrimeLogger.Shared
 
+@using System.ComponentModel
+
 @inject IAuthenticationService authenticationService
 @inject NavigationManager NavigationManager
 @inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
@@ -101,17 +103,31 @@
                             </div>
 
                         </div>
+
+                        <div id="recaptcha_container"></div>
+
+                        @*<button type="button" class="btn btn-primary" @onclick="ShowResponse">Show Response</button>*@
+
+                        
+
+                       @* @reCAPTCHA_response*@
+
+
                         <hr style="background-color:aliceblue" />
                         <div class="py-2">
-                            @if (IsProcessing)
+                            @if(reCAPTCHA_response != null)
                             {
-                                <button type="submit" class="btn btn-outline-dark btn-block disabled"><i class="fas fa-sign-in-alt"></i> Please Wait....</button>
+                                @if (IsProcessing)
+                                {
+                                    <button type="submit" class="btn btn-outline-dark btn-block disabled"><i class="fas fa-sign-in-alt"></i> Please Wait....</button>
 
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-outline-dark btn-block"><i class="fas fa-sign-in-alt"></i> Register</button>
+                                }
                             }
-                            else
-                            {
-                                <button type="submit" class="btn btn-outline-dark btn-block"><i class="fas fa-sign-in-alt"></i> Register</button>
-                            }
+                            
                         </div>
                     </div>
                 </div>
@@ -134,6 +150,11 @@
     private int? cityIdSelected { get; set; }
     private int? suburbIdSelected { get; set; }
 
+    private int WidgetId;
+
+    public string reCAPTCHA_response { get; set; }
+
+
     public IEnumerable<string> Errors { get; set; }
 
     private IEnumerable<CrimeProvinceDTO> CrimeProvinces { get; set; } = new List<CrimeProvinceDTO>();
@@ -142,6 +163,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
     }
 
@@ -153,7 +175,7 @@
 
         var result = await authenticationService.RegisterUser(UserForRegistration);
 
-        
+
         if (result.isRegistrationSuccessful)
         {
             IsProcessing = false;
@@ -161,9 +183,12 @@
         }
         else
         {
+            await JsRuntime.ToastrError("User name / email address already exist.");
             IsProcessing = false;
             Errors = result.Errors;
             ShowRegistrationErrors = true;
+            
+
         }
     }
 
@@ -202,4 +227,37 @@
             CrimeSuburbs = await CrimeProvinceCitySuburbService.GetSuburbDetailsByCityId(cityIdSelected.Value);
         }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        await JsRuntime.InvokeVoidAsync("loadScript", "js/JsOfReCAPTCHA.js");
+
+        if (firstRender)
+        {
+            WidgetId = await JsRuntime.InvokeAsync<int>("render_recaptcha", DotNetObjectReference.Create(this), "recaptcha_container", "6LdwoJgdAAAAAFpP9IiUTptkP2c9kY4Uk5tAw-OA");
+        };
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public void CallbackOnSuccess(string response)
+    {
+        reCAPTCHA_response = response;
+        StateHasChanged();
+    }
+
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public async void CallbackOnExpired()
+    {
+        await JsRuntime.ToastrError("Oops ReCAPTCHA Verification expired. Please try again.");
+        NavigationManager.NavigateTo("/registration");
+    }
+
+    private void ShowResponse()
+    {
+        reCAPTCHA_response = $"The response for the reCAPTCHA widget: {reCAPTCHA_response}";
+    }
+}
 }

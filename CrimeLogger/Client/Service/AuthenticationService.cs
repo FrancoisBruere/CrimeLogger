@@ -82,17 +82,16 @@ namespace CrimeLogger.Client.Service
             var response = await _client.PostAsync("api/account/signup", bodyContent);
 
 
-            var contentTemp = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<RegistrationResponseDTO>(contentTemp);
-
-
             if (response.IsSuccessStatusCode)
             {
+                var contentTemp = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<RegistrationResponseDTO>(contentTemp);
+
                 return new RegistrationResponseDTO { isRegistrationSuccessful = true };
             }
             else
             {
-                return result;
+                return new RegistrationResponseDTO { isRegistrationSuccessful = false };
             }
         }
     }

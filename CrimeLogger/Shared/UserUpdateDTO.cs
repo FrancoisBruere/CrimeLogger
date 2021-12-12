@@ -25,7 +25,6 @@ namespace CrimeLogger.Shared
         [Required(ErrorMessage = "Street is required")]
         public string StreetName { get; set; }
 
-        [Range(typeof(bool), "true", "true", ErrorMessage = "Receive crime email notification option is required")]
         public bool IsEmailNotification { get; set; }
         public bool IsPushNotification { get; set; }
 

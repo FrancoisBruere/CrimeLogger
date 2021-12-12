@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="DB\" />
+    <Folder Include="Shared\" />
   </ItemGroup>
 
 
