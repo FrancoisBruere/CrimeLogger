@@ -48,6 +48,7 @@
                             
                         </div>
                         <div class="py-2">
+                            <label>Address Details</label>
                             <InputSelect @bind-Value="UserForRegistration.ProvinceId" @oninput="CityChange" class="form-control">
                                 <option value="">-- Select Province --</option>
                                 @foreach (var prov in CrimeProvinces)
@@ -235,7 +236,7 @@
 
         if (firstRender)
         {
-            WidgetId = await JsRuntime.InvokeAsync<int>("render_recaptcha", DotNetObjectReference.Create(this), "recaptcha_container", "6LdwoJgdAAAAAFpP9IiUTptkP2c9kY4Uk5tAw-OA");
+            WidgetId = await JsRuntime.InvokeAsync<int>("render_recaptcha", DotNetObjectReference.Create(this), "recaptcha_container", SD.ReCaptchaKey);
         };
 
         await base.OnAfterRenderAsync(firstRender);

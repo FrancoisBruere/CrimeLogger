@@ -1,6 +1,5 @@
 using Business.Repository;
 using Business.Repository.IRepository;
-using CrimeLogger.Server;
 using CrimeLogger.Server.Helper;
 using CrimeLoggger_Server.Helper;
 using DataAccess.Data;
@@ -9,11 +8,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
 builder.Services.AddControllersWithViews();
 
 
@@ -45,15 +50,13 @@ builder.Services.AddAuthentication(opt =>
         ValidIssuer = apiSettings.ValidIssuer,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
+        
 
     };
 });
 
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.Configure<IdentityOptions>(opt =>
 {
     opt.User.RequireUniqueEmail = true;
@@ -63,7 +66,7 @@ builder.Services.Configure<IdentityOptions>(opt =>
 
 });
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
-                 opt.TokenLifespan = TimeSpan.FromDays(2));
+                 opt.TokenLifespan = TimeSpan.FromDays(1));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICrimeDetailRepository, CrimeDetailRepository>();
@@ -73,10 +76,13 @@ builder.Services.AddScoped<ICrimeSuburbRepository, CrimeSuburbRepository>();
 builder.Services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
 builder.Services.AddScoped<IUserUpdateRepository, UserUpdateRepository>();
 
-
-
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+//builder.Services.AddCors(o => o.AddPolicy("CrimeLogger", builder =>
+//{
+//    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+
+//}));
 
 builder.Services.AddRouting(option => option.LowercaseUrls = true);
 
@@ -100,6 +106,7 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
+app.UseCors("CrimeLogger");
 app.UseRouting();
 
 app.UseAuthentication();

@@ -26,5 +26,6 @@ namespace Common
 
         public const string TwoFaKey = "lsdfkjHASDKkjhfijir7788422562@#h%1123W";
         public const string APIGeo = "AIzaSyAoljylNNfvCee28OD3tHGgAayv7nJtlg4";
+        public const string ReCaptchaKey = "6LdwoJgdAAAAAFpP9IiUTptkP2c9kY4Uk5tAw-OA";
     }
 }

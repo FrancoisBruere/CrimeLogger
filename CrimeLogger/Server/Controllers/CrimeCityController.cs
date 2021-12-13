@@ -6,7 +6,7 @@ namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
     [Controller]
-    [Authorize]
+
     public class CrimeCityController : Controller
     {
         private readonly ICrimeCityRepository _crimeCityRepository;
@@ -17,7 +17,6 @@ namespace CrimeLogger.Server.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetCrimeCitiesByProvinceId(int? provinceId)
         {
             if (provinceId == null)

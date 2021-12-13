@@ -17,7 +17,6 @@ namespace CrimeLogger.Server.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetCrimeTypes()
         {
             var allTypes = await _crimeTypeRepository.GetAllCrimeTypes();

@@ -6,7 +6,6 @@ namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
     [Controller]
-    [Authorize]
     public class CrimeProvinceController : Controller
     {
         private readonly ICrimeProvinceRepository _crimeProvinceRepository;
@@ -17,7 +16,6 @@ namespace CrimeLogger.Server.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetCrimeProvinces()
         {
             var allProvinces = await _crimeProvinceRepository.GetAllCrimeProvinces();
