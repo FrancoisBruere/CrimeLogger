@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Repository.IRepository;
+using Common;
 using CrimeLogger.Shared;
 using DataAccess.Data;
 using Microsoft.AspNetCore.Identity;
@@ -58,6 +59,26 @@ namespace Business.Repository
         {
             return _mapper.Map<IEnumerable<CrimeDetail>, IEnumerable<CrimeDetailDTO>>(
                await _db.CrimeDetails.Where(x => x.CrimeType_Id == typeId).ToListAsync());
+        }
+
+        public async Task<int> GetCrimeSubmitCount(string createdBy)
+        {
+            // find logged crimes check count >=2 per month 
+            var userReportedCrimes = await _db.CrimeDetails.Where(u => u.CreatedBy == createdBy).ToListAsync();
+            var crimecount = 0;
+            foreach (var crime in userReportedCrimes)
+            {
+                if (crime.CreatedDate >= DateTime.Now.Date.AddDays(-30))
+                {
+                    crimecount++;
+                }
+            }
+
+            if (crimecount >= SD.SubmissionCount)
+            {
+                return crimecount;
+            }
+            return 0;
         }
     }
 }

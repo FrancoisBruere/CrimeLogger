@@ -221,22 +221,36 @@ else
             if (CrimeDetailModel.Id == 0 && userInfo != null)
             {
 
-                    await HandleGeoCoding();
+                var response = await HandleGeoCoding();
 
-                    CrimeDetailModel.MyLat = MyLat;
-                    CrimeDetailModel.MyLng = MyLng;
+                if (response.Any())
+                {
+                     CrimeDetailModel.MyLat = MyLat;
+                     CrimeDetailModel.MyLng = MyLng;
 
                     if (MyLat != 0 && MyLng != 0)
                     {
                         CrimeDetailModel.IsMarkerAdded = true;
+                        //await JsRuntime.ToastrSeccess("GeoCoding completed");
                     }
                     else
                     {
                         CrimeDetailModel.IsMarkerAdded = false;
+                        await JsRuntime.ToastrError("GeoCoding was not successful! Manual Geocoding will be done on the adress for marker placement.");
                     }
+                }
 
-                    var createdResult = await CrimeDetailService.CreateCrime(CrimeDetailModel);
+                var createdResult = await CrimeDetailService.CreateCrime(CrimeDetailModel);
+
+                if(!createdResult.IsSuccessStatusCode)
+                {
+                    await JsRuntime.ToastrError("Submission unsuccessful, submit limit exceeded.");
+                }
+                else
+                {
                     await JsRuntime.ToastrSeccess("Crime successfully logged! Stay Safe!");
+                     NavigationManager.NavigateTo("/crime/detail");
+                }
             }
         }
         catch (Exception e)
@@ -244,9 +258,8 @@ else
 
             throw new Exception(e.Message);
         }
-        NavigationManager.NavigateTo("/crime/detail");
+       
     }
-
 
     // GeoCoding Method for crime submission page
     public async Task<string> HandleGeoCoding()
@@ -291,32 +304,10 @@ else
 
                 var country = addresses.Where(a => !a.IsPartialMatch).Select(a => a[GoogleAddressType.Country]).FirstOrDefault();
 
-                // if address matched = 2 might have to drop from geocoding
-
-                //if (addresses.Count() > 1)
-                //{
-                //    ParentProcessing = true;
-                //    StateHasChanged();
-                //    //await SomeMethod();
-                //}
-
-                //testModal.ShowModal();
-
-                var formattedAddress = ("Formatted: " + addresses.First().FormattedAddress); //Formatted: 1600 Pennsylvania Ave SE, Washington, DC 20003, USA
+                var formattedAddress = ("Formatted: " + addresses.First().FormattedAddress); 
                 MyLat = (addresses.First().Coordinates.Latitude);
                 MyLng = (addresses.First().Coordinates.Longitude); //Coordinates: 38.8791981, -76.9818437
                 var MyLatLng = MyLat.ToString() + "," + MyLng.ToString();
-
-                if (MyLatLng != null)
-                {
-
-                    await JsRuntime.ToastrSeccess("GeoCoding completed");
-                }
-                else
-                {
-                    await JsRuntime.ToastrError("No action Required! GeoCoding was not successful! Manual Geocoding will be done on the adress for marker placement.");
-
-                }
 
                 return MyLatLng;
             }

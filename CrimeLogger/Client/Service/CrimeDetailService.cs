@@ -12,19 +12,22 @@ namespace CrimeLogger.Client.Service.IService
         {
             _client = client;
         }
-        public async Task<CrimeDetailDTO> CreateCrime(CrimeDetailDTO crimeDetailDTO)
+        public async Task<HttpResponseMessage> CreateCrime(CrimeDetailDTO crimeDetailDTO)
         {
             var content = new StringContent(JsonConvert.SerializeObject(crimeDetailDTO), Encoding.UTF8, "application/json");
-            var responce = await _client.PostAsync($"api/CrimeCreate/", content);
-            var apiResponce = await responce.Content.ReadAsStringAsync();
-            var crimeSubmitted = JsonConvert.DeserializeObject<CrimeDetailDTO>(apiResponce);
-            return crimeSubmitted;
+            var response = await _client.PostAsync($"api/CrimeCreate/", content);
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return response;
+            }
+
+            return response ;
         }
 
         public async Task<IEnumerable<CrimeDetailDTO>> GetAllCrimeDetails()
         {
-            var responce = await _client.GetAsync($"api/CrimeDetail/");
-            var content = await responce.Content.ReadAsStringAsync();
+            var response = await _client.GetAsync($"api/CrimeDetail/");
+            var content = await response.Content.ReadAsStringAsync();
             var crimes = JsonConvert.DeserializeObject<IEnumerable<CrimeDetailDTO>>(content);
 
             return crimes;
@@ -32,12 +35,12 @@ namespace CrimeLogger.Client.Service.IService
 
         public async Task<IEnumerable<CrimeDetailDTO>> GetCrimeDetailsByTypeId(int typeId)
         {
-            var responce = await _client.GetAsync($"api/CrimeDetailByType?typeId={typeId}");
+            var response = await _client.GetAsync($"api/CrimeDetailByType?typeId={typeId}");
 
-            if (responce.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
 
-                var content = await responce.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync();
                 var crimesByType = JsonConvert.DeserializeObject<IEnumerable<CrimeDetailDTO>>(content);
                 return crimesByType;
 

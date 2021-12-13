@@ -13,6 +13,6 @@ namespace Business.Repository.IRepository
         public Task<CrimeDetailDTO> GetCrime(int crimeId);
         public Task<IEnumerable<CrimeDetailDTO>> GetCrimeByType(int typeId);
         public Task<IEnumerable<CrimeDetailDTO>> GetAllCrimes();
-
+        public Task<int> GetCrimeSubmitCount(string createdBy);
     }
 }

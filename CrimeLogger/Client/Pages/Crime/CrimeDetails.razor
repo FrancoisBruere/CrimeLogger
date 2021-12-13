@@ -61,8 +61,6 @@ else
             await LoadCrimes();
             _crimeCount = Crimes.Count();
 
-            await jsRuntime.ToastrSeccess("Crimes successfully loaded zoom to view");
-
         }
         catch (Exception e)
         {
