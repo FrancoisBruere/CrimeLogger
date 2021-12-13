@@ -71,15 +71,17 @@ namespace CrimeLogger.Server.Controllers
 
                 var result = await _userManager.CreateAsync(user, userRequestDTO.Password);
 
-                //Email Confirmation
-
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description);
+                    return BadRequest(new RegistrationResponseDTO { Errors = errors, isRegistrationSuccessful = false });
+                }
+                //send email link
                 try
                 {
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                     var confirmationLink = Url.Link("Confirmation", new { token, email = user.Email });
-
-                    //var confirmationLink = Url.Action(nameof("EmailController"),"ConfirmEmail", new { token, email = user.Email }, Request.Scheme);
 
                     await _emailSender.SendEmailAsync(user.Email, "Account Confirmation Link - CrimeLogger",
                     $"Please confirm your account by clicking <a href=\"" + confirmationLink + "\">here</a>");
@@ -88,13 +90,6 @@ namespace CrimeLogger.Server.Controllers
                 {
 
                     throw new Exception(ex.Message);
-                }
-
-
-                if (!result.Succeeded)
-                {
-                    var errors = result.Errors.Select(e => e.Description);
-                    return BadRequest(new RegistrationResponseDTO { Errors = errors, isRegistrationSuccessful = false });
                 }
 
                 var roleResult = await _userManager.AddToRoleAsync(user, SD.Role_User);
@@ -106,10 +101,6 @@ namespace CrimeLogger.Server.Controllers
                 }
 
                 return StatusCode(201);
-
-        
-
-
         }
 
         [HttpPost]

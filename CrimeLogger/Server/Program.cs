@@ -106,7 +106,7 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-app.UseCors("CrimeLogger");
+//app.UseCors("CrimeLogger");
 app.UseRouting();
 
 app.UseAuthentication();

@@ -88,11 +88,14 @@ namespace CrimeLogger.Client.Service
                 var result = JsonConvert.DeserializeObject<RegistrationResponseDTO>(contentTemp);
 
                 return new RegistrationResponseDTO { isRegistrationSuccessful = true };
+
             }
-            else
-            {
-                return new RegistrationResponseDTO { isRegistrationSuccessful = false };
-            }
+
+            var contenReturn = await response.Content.ReadAsStringAsync();
+            var results = JsonConvert.DeserializeObject<RegistrationResponseDTO>(contenReturn);
+            return results;
+            
+           
         }
     }
 }

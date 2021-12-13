@@ -106,14 +106,6 @@
                         </div>
 
                         <div id="recaptcha_container"></div>
-
-                        @*<button type="button" class="btn btn-primary" @onclick="ShowResponse">Show Response</button>*@
-
-                        
-
-                       @* @reCAPTCHA_response*@
-
-
                         <hr style="background-color:aliceblue" />
                         <div class="py-2">
                             @if(reCAPTCHA_response != null)
@@ -188,8 +180,6 @@
             IsProcessing = false;
             Errors = result.Errors;
             ShowRegistrationErrors = true;
-            
-
         }
     }
 
