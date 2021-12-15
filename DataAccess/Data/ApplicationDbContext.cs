@@ -22,6 +22,7 @@ namespace DataAccess.Data
         public DbSet<CrimeProvince> CrimeProvinces { get; set; }
         public DbSet<CrimeDetail> CrimeDetails { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<CrimeNotificationSubscription> NotificationSubscriptions { get; set; }
 
     }
 }

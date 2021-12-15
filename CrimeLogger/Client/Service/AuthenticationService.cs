@@ -6,6 +6,7 @@ using CrimeLogger_Client.Service;
 using Microsoft.AspNetCore.Components.Authorization;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 
 namespace CrimeLogger.Client.Service
@@ -94,8 +95,12 @@ namespace CrimeLogger.Client.Service
             var contenReturn = await response.Content.ReadAsStringAsync();
             var results = JsonConvert.DeserializeObject<RegistrationResponseDTO>(contenReturn);
             return results;
-            
-           
+        }
+
+        public async Task SubscribeToNotifications(NotificationSubscriptionDTO subscription)
+        {
+            var response = await _client.PutAsJsonAsync("api/notifications", subscription);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

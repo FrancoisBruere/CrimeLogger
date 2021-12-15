@@ -8,6 +8,7 @@
 @inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
 @inject IJSRuntime JsRuntime
 
+
 <PageTitle>Register Account</PageTitle>
 <EditForm Model="UserForRegistration" OnValidSubmit="RegisterUser" class="pt-4">
     <DataAnnotationsValidator />
@@ -105,7 +106,7 @@
 
                         </div>
 
-                        <div id="recaptcha_container"></div>
+                        <div class="row col-md-6" id="recaptcha_container"></div>
                         <hr style="background-color:aliceblue" />
                         <div class="py-2">
                             @if(reCAPTCHA_response != null)
@@ -158,6 +159,7 @@
     {
 
         CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
+
     }
 
 
@@ -168,7 +170,7 @@
 
         var result = await authenticationService.RegisterUser(UserForRegistration);
 
-
+        
         if (result.isRegistrationSuccessful)
         {
             IsProcessing = false;
@@ -183,6 +185,7 @@
         }
     }
 
+    
     private async Task CityChange(ChangeEventArgs args)
     {
 

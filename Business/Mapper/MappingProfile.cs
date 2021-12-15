@@ -20,7 +20,7 @@ namespace Business.Mapper
             CreateMap<CrimeSuburb, CrimeSuburbDTO>().ReverseMap();
             CreateMap<CrimeType, CrimeTypeDTO>().ReverseMap();
             CreateMap<CrimeDetail, CrimeDetailDTO>().ReverseMap();
-            
+            CreateMap<CrimeNotificationSubscription, NotificationSubscriptionDTO>().ReverseMap();
             
         }
     }

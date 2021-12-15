@@ -50,6 +50,7 @@ namespace CrimeLogger.Server.Controllers
             if (userRequestDTO == null || !ModelState.IsValid)
             {
                 return BadRequest();
+                
             }
 
                 var user = new ApplicationUser

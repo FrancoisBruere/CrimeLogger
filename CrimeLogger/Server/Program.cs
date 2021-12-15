@@ -78,11 +78,11 @@ builder.Services.AddScoped<IUserUpdateRepository, UserUpdateRepository>();
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
-//builder.Services.AddCors(o => o.AddPolicy("CrimeLogger", builder =>
-//{
-//    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+builder.Services.AddCors(o => o.AddPolicy("CrimeLogger", builder =>
+{
+    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 
-//}));
+}));
 
 builder.Services.AddRouting(option => option.LowercaseUrls = true);
 
@@ -106,7 +106,7 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-//app.UseCors("CrimeLogger");
+app.UseCors("CrimeLogger");
 app.UseRouting();
 
 app.UseAuthentication();

@@ -7,6 +7,7 @@
 @inject ICrimeTypeService CrimeTypeService
 @inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
 @inject ICrimeDetailService CrimeDetailService
+@inject IAuthenticationService authenticationService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject ILocalStorageService localStorage
@@ -173,6 +174,36 @@ else
         CrimeDetailModel.CrimeDate = DateTime.Now;
         CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
         CrimeTypes = await CrimeTypeService.GetAllCrimeTypes();
+        try
+        {
+            await RequestNotificationSubscriptionAsync();
+        }catch(Exception e)
+        {
+            Console.Write(e.Message);
+        }
+
+    }
+
+    public async Task RequestNotificationSubscriptionAsync()
+    {
+        var subscription = await JsRuntime.InvokeAsync<NotificationSubscriptionDTO>("blazorPushNotifications.requestSubscription");
+        var userInfo = await localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+        subscription.UserId = userInfo.Id;
+       
+        if (subscription != null)
+        {
+            try
+            {   
+                 Console.Write("We are here now about to call Service" + subscription.Url);
+                
+                await authenticationService.SubscribeToNotifications(subscription);
+            }
+            catch(AccessViolationException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
 
     private async Task CityChange(ChangeEventArgs args)
@@ -236,7 +267,7 @@ else
                     else
                     {
                         CrimeDetailModel.IsMarkerAdded = false;
-                        await JsRuntime.ToastrError("GeoCoding was not successful! Manual Geocoding will be done on the adress for marker placement.");
+                        await JsRuntime.ToastrError("GeoCoding unsuccessful! Manual Geocoding will be done on the adress for marker placement.");
                     }
                 }
 

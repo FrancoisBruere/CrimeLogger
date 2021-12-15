@@ -1,8 +1,11 @@
-﻿@using Microsoft.AspNetCore.Components
+﻿@using Common
+@using Microsoft.AspNetCore.Components
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "confirmedemail";
 }
 @inject NavigationManager NavigationManager
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +26,7 @@
                 Welcome to CrimeLogger.
             </h3>
             <div>
-                <p>Thank you for confirming your email.
+                <p>Thank you for confirming your email. Please log in <a href="@SD.TempLink">here</a>.
                     
                     @*@Html.ActionLink("Click here to Log in", "", "", routeValues: null, htmlAttributes: new { id = "loginLink" })*@
                 </p>
@@ -38,5 +41,5 @@
 
 @{
    
-
+    
 }
