@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Repository.IRepository;
 using CrimeLogger.Shared;
 using DataAccess.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -13,29 +14,26 @@ namespace CrimeLogger.Server.Controllers
     [Authorize]
     public class NotificationsController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        private readonly IMapper _mapper;
-        public NotificationsController(ApplicationDbContext db, IMapper mapper)
+
+        private readonly INotificationRepository _notification;
+        public NotificationsController(INotificationRepository notification)
         {
-            _db = db;
-            _mapper = mapper;
+            _notification = notification;
         }
 
         [HttpPut]
         public async Task<NotificationSubscriptionDTO>Subscribe(NotificationSubscriptionDTO subscription) 
         {
-           // var userId =("Samm@sam.com");
-            // GetUserId
-            //var oldSubscriptions = _db.NotificationSubscriptions.Where(e => e.UserId == userId);
-            //_db.NotificationSubscriptions.RemoveRange(oldSubscriptions);
+            var approvedSubscription = await _notification.AddSubscrition(subscription);
 
-            //subscription.UserId = userId;
-            var result = _mapper.Map<NotificationSubscriptionDTO, CrimeNotificationSubscription>(subscription);
-            await _db.NotificationSubscriptions.AddAsync(result);
-
-            await _db.SaveChangesAsync();
-
-            return subscription;
+            if(approvedSubscription != null)
+            {
+                return approvedSubscription;
+            }
+            else
+            {
+                throw new NullReferenceException("Controller - Addsubscription - Failed");
+            }
 
         }
 

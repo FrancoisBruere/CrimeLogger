@@ -6,7 +6,8 @@
 @inject ICrimeDetailService crimeDetailService
 @inject ICrimeTypeService crimeTypeService
 @inject ICrimeProvinceCitySuburbService ICrimeProvinceCitySuburb
-@inject IJSRuntime jsRuntime
+@inject IJSRuntime JsRuntime
+
 
 @attribute [Authorize(Roles =SD.Role_User)]
 <PageTitle>Map View</PageTitle>
@@ -54,18 +55,18 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+
         try
         {
             CrimeTypes = await crimeTypeService.GetAllCrimeTypes();
 
             await LoadCrimes();
             _crimeCount = Crimes.Count();
-
         }
         catch (Exception e)
         {
 
-            await jsRuntime.ToastrError(e.Message);
+            await JsRuntime.ToastrError(e.Message);
         }
     }
 
@@ -77,10 +78,14 @@ else
     private async Task LoadCrimes()
     {
         Crimes = await crimeDetailService.GetAllCrimeDetails();
+         
+        
 
         if (!Crimes.Any())
         {
-            await jsRuntime.ToastrError("Failed to load crimes");
+            await JsRuntime.ToastrError("Failed to load crimes");
         }
     }
+
+    
 }

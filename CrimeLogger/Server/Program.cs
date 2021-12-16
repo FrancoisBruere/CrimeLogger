@@ -75,6 +75,7 @@ builder.Services.AddScoped<ICrimeCityRepository, CrimeCityRepository>();
 builder.Services.AddScoped<ICrimeSuburbRepository, CrimeSuburbRepository>();
 builder.Services.AddScoped<ICrimeTypeRepository, CrimeTypeRepository>();
 builder.Services.AddScoped<IUserUpdateRepository, UserUpdateRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 

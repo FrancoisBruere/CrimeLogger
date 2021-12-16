@@ -5,6 +5,8 @@
 
 @inject IAuthenticationService authenticationService
 @inject NavigationManager navigationManager
+@inject IJSRuntime JsRuntime
+@inject ILocalStorageService localStorage
 
 <PageTitle>Login</PageTitle>
 <EditForm Model="UserForAuthentication" OnValidSubmit="LoginUser">
@@ -73,6 +75,8 @@
 
         if (result.isAuthSuccessful)
         {
+            await RequestNotificationSubscriptionAsync();
+            
             IsProcessing = false;
 
             // get and set return page that the user was on
@@ -96,6 +100,24 @@
             ShowAuthenticationErrors = true;
         }
     }
+     public async Task RequestNotificationSubscriptionAsync()
+    {
+        var subscription = await JsRuntime.InvokeAsync<NotificationSubscriptionDTO>("blazorPushNotifications.requestSubscription");
+        var userInfo = await localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+        subscription.UserId = userInfo.Id;
+       
+        if (subscription != null && userInfo != null)
+        {
+            try
+            {   
+                await authenticationService.SubscribeToNotifications(subscription);
+            }
+            catch(AccessViolationException ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
-
+        }
+    }
+       
 }
