@@ -72,9 +72,10 @@ namespace Business.Repository
                 {
                     crimecount++;
                 }
+               
             }
 
-            if (crimecount >= SD.SubmissionCount)
+            if (crimecount == SD.SubmissionCount)
             {
                 return crimecount;
             }

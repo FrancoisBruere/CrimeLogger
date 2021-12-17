@@ -21,7 +21,8 @@ namespace CrimeLogger.Client.Service.IService
                 return response;
             }
 
-            return response ;
+            return response;
+
         }
 
         public async Task<IEnumerable<CrimeDetailDTO>> GetAllCrimeDetails()

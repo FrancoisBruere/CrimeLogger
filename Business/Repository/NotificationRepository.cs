@@ -3,6 +3,7 @@ using Business.Repository.IRepository;
 using CrimeLogger.Shared;
 using DataAccess.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Business.Repository
         {
             // if needed find old subs and remove
 
-            //var oldSubscriptions = _db.NotificationSubscriptions.Where(e => e.UserId == userId);
+            //var oldSubscriptions = _db.NotificationSubscriptions.Where(e => e.UserId == subscription.UserId);
             //_db.NotificationSubscriptions.RemoveRange(oldSubscriptions);
 
             if (subscription != null)
@@ -45,6 +46,49 @@ namespace Business.Repository
             }
             throw new NullReferenceException("DB - Addsubscription");
            
+
+        }
+
+        public async Task<List<NotificationSubscriptionDTO>> GetSubscribersToBeNotified(CrimeDetailDTO crimeDetail)
+        {
+            List<NotificationSubscriptionDTO> SendToSubscribers = new List<NotificationSubscriptionDTO>();
+           
+            // select from userstable where city province sub etc match and where suscribers match on userid return subscribers
+
+            if (crimeDetail != null)
+            {
+                
+
+                var sendToCriteria = await _userManager.Users
+               .Where(u => u.ProvinceId == crimeDetail.Province_Id)
+               .Where(u => u.CityId == crimeDetail.City_Id)
+               .Where(u => u.SuburbId == crimeDetail.Suburb_Id)
+               .ToListAsync();
+
+                if (sendToCriteria.Any())
+                {
+                    foreach (var user in sendToCriteria)
+                    {
+                        var selectedSubscriptions =  _db.NotificationSubscriptions.Where(s => s.UserId == user.Id);
+
+                        foreach (var subscription in selectedSubscriptions)
+                        {
+                            SendToSubscribers.Add(_mapper.Map<CrimeNotificationSubscription, NotificationSubscriptionDTO>(subscription));
+                        }
+
+                       
+                    }
+                    return SendToSubscribers;
+
+                }
+
+
+                return null;
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
 
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CrimeLogger.Shared;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace DataAccess.Data
         public bool IsEmailNotification { get; set; }
         public bool IsPushNotification { get; set; }
         public bool IsTermsAccepted { get; set; }
+
+        
 
     }
 }

@@ -75,7 +75,7 @@
 
         if (result.isAuthSuccessful)
         {
-            await RequestNotificationSubscriptionAsync();
+           
             
             IsProcessing = false;
 
@@ -92,6 +92,7 @@
             {
                 navigationManager.NavigateTo("/" + ReturnUrl);
             }
+             await RequestNotificationSubscriptionAsync();
         }
         else
         {
@@ -100,16 +101,17 @@
             ShowAuthenticationErrors = true;
         }
     }
-     public async Task RequestNotificationSubscriptionAsync()
+    public async Task RequestNotificationSubscriptionAsync()
     {
         var subscription = await JsRuntime.InvokeAsync<NotificationSubscriptionDTO>("blazorPushNotifications.requestSubscription");
         var userInfo = await localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
-        subscription.UserId = userInfo.Id;
        
-        if (subscription != null && userInfo != null)
+       
+        if (subscription != null)
         {
             try
-            {   
+            {  
+                subscription.UserId = userInfo.Id;
                 await authenticationService.SubscribeToNotifications(subscription);
             }
             catch(AccessViolationException ex)

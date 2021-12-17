@@ -175,7 +175,7 @@ else
 
         CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
         CrimeTypes = await CrimeTypeService.GetAllCrimeTypes();
-   
+
     }
 
     private async Task CityChange(ChangeEventArgs args)
@@ -213,7 +213,7 @@ else
         }
     }
 
-   
+
 
     private async Task HandelCrimeUpsert()
     {
@@ -225,13 +225,13 @@ else
 
             if (CrimeDetailModel.Id == 0 && userInfo != null)
             {
-
+                
                 var response = await HandleGeoCoding();
 
                 if (response.Any())
                 {
-                     CrimeDetailModel.MyLat = MyLat;
-                     CrimeDetailModel.MyLng = MyLng;
+                    CrimeDetailModel.MyLat = MyLat;
+                    CrimeDetailModel.MyLng = MyLng;
 
                     if (MyLat != 0 && MyLng != 0)
                     {
@@ -253,10 +253,8 @@ else
                 }
                 else
                 {
-                    // find all users in db in submitted crime province city and street where they have subscribed to push notification and send notfication
-
-
-                    await JsRuntime.ToastrSeccess("Crime successfully logged! Stay Safe!");
+                     await JsRuntime.ToastrSeccess("Crime successfully logged! Stay Safe!");
+                     
                      NavigationManager.NavigateTo("/crime/detail");
                 }
             }

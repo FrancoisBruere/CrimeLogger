@@ -29,6 +29,9 @@ namespace Common
         public const string APIGeo = "AIzaSyAoljylNNfvCee28OD3tHGgAayv7nJtlg4";
         public const string ReCaptchaKey = "6LdwoJgdAAAAAFpP9IiUTptkP2c9kY4Uk5tAw-OA";
 
+        public const string SubscriptionPublic_key = "BPFwQhPuYLoIlDllaKqw9NgnpZg6M00h2ZtWek5iTB8QD_aeg00h523emFhwJfudvgm2qSHf5_QK2O9S4K6auAE";
+        public const string SubscriptionPrivate_key = "zfGeWbU5nIw0HNR6pb0snfk167oaArCoN6g6BUJiseg";
+
         public const string TempLink = "https://localhost:7141/login";
     }
 }
