@@ -6,8 +6,7 @@ Application allows registered users to log crimes. MapMarkers are placed at crim
 
 Currently the core is fully functional still working on:
 
-- Implement crime alert enail notification.
-- fix bug with click event on push notification
+- Implement crime alert email notification.
 - HTML Design css
 - code refactor
 
