@@ -2,6 +2,7 @@
 using Common;
 using CrimeLogger.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using WebPush;
@@ -15,11 +16,15 @@ namespace CrimeLogger.Server.Controllers
     {
         private readonly ICrimeDetailRepository _crimeDetailRepository;
         private readonly INotificationRepository _notificationRepository;
+        private readonly ICrimeTypeRepository _crimeTypeRepository;
+        private readonly IEmailSender _emailSender;
 
-        public CrimeCreateController(ICrimeDetailRepository crimeDetailRepository, INotificationRepository notificationRepository)
+        public CrimeCreateController(ICrimeDetailRepository crimeDetailRepository, INotificationRepository notificationRepository, ICrimeTypeRepository crimeTypeRepository, IEmailSender emailSender)
         {
             _crimeDetailRepository = crimeDetailRepository;
             _notificationRepository = notificationRepository;
+            _crimeTypeRepository = crimeTypeRepository;
+            _emailSender = emailSender;
         }
 
 
@@ -46,15 +51,24 @@ namespace CrimeLogger.Server.Controllers
                 if (createdCrime != null)
                 {
 
-                    // get users to send notifications too from NotificationRepository
-                    // call sendnotifications method
+                    //get and send notifications
+
                     var pushSubscribers = await _notificationRepository.GetSubscribersToBeNotified(createdCrime);
+                    var crimeType =  await _crimeTypeRepository.GetCrimeType(createdCrime.CrimeType_Id.Value);
+                   
 
                     if (pushSubscribers != null)
                     {
-                        await SendNotificationAsync(createdCrime, pushSubscribers, $"New Crime reported in your registered area! Street: {createdCrime.Street}");
+                        await SendNotificationAsync(createdCrime, pushSubscribers, $"New crime reported in your area! Details: {crimeType.Name}, {createdCrime.Street}");
                     }
+
+                    var emailSubscribers = await _notificationRepository.GetEmailSubscribersToBeNotified(createdCrime);
                     
+                    if (emailSubscribers != null)
+                    {
+                        await SendEmailNotificationAsync(createdCrime, emailSubscribers);
+                    }
+
                     return StatusCode(201);
 
                 }
@@ -63,11 +77,35 @@ namespace CrimeLogger.Server.Controllers
                     return StatusCode(500);
                 }
 
-                
+        }
+
+        private async Task SendEmailNotificationAsync(CrimeDetailDTO crimeDetail, List<UserDTO> subscriptions)
+        {
+            var crimeType = await _crimeTypeRepository.GetCrimeType(crimeDetail.CrimeType_Id.Value);
+
+            foreach (var user in subscriptions)
+            {
+                try
+                {
+                   await _emailSender.SendEmailAsync(user.Email, "Crimelogger - New crime reported in your area!",
+                   $"Crime Details: {crimeType.Name}\n" +
+                   $"Street: {crimeDetail.Street}\n" +
+                   $"Description: {crimeDetail.Description}\n" +
+                   $"Crime date: {crimeDetail.CrimeDate}\n" +
+                   $"Reported date: {crimeDetail.CreatedDate}");
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine("Error sending email notification: " + ex.Message);
+                }
+               
+            }
+            
 
         }
 
-      
+
         private static async Task SendNotificationAsync(CrimeDetailDTO crimeDetail, List<NotificationSubscriptionDTO> subscriptions, string message)
         {
             var publicKey = SD.SubscriptionPublic_key;
@@ -90,7 +128,7 @@ namespace CrimeLogger.Server.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine("Error sending push notification: " + ex.Message);
+                    Console.WriteLine("Error sending push notification: " + ex.Message);
                 }
             }
            

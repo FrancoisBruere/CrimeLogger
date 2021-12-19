@@ -11,5 +11,6 @@ namespace Business.Repository.IRepository
     {
         public Task<NotificationSubscriptionDTO> AddSubscrition(NotificationSubscriptionDTO subscription);
         public Task<List<NotificationSubscriptionDTO>> GetSubscribersToBeNotified(CrimeDetailDTO crimeDetail);
+        public Task<List<UserDTO>> GetEmailSubscribersToBeNotified(CrimeDetailDTO crimeDetail);
     }
 }

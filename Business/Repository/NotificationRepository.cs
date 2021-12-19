@@ -18,11 +18,13 @@ namespace Business.Repository
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
+
         public NotificationRepository(ApplicationDbContext db, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             _mapper = mapper;
             _userManager = userManager;
+
         }
         public async Task<NotificationSubscriptionDTO> AddSubscrition(NotificationSubscriptionDTO subscription)
         {
@@ -52,18 +54,19 @@ namespace Business.Repository
         public async Task<List<NotificationSubscriptionDTO>> GetSubscribersToBeNotified(CrimeDetailDTO crimeDetail)
         {
             List<NotificationSubscriptionDTO> SendToSubscribers = new List<NotificationSubscriptionDTO>();
-           
+
             // select from userstable where city province sub etc match and where suscribers match on userid return subscribers
 
             if (crimeDetail != null)
             {
-                
+
 
                 var sendToCriteria = await _userManager.Users
-               .Where(u => u.ProvinceId == crimeDetail.Province_Id)
-               .Where(u => u.CityId == crimeDetail.City_Id)
-               .Where(u => u.SuburbId == crimeDetail.Suburb_Id)
-               .ToListAsync();
+                                     .Where(u => u.ProvinceId == crimeDetail.Province_Id)
+                                     .Where(u => u.CityId == crimeDetail.City_Id)
+                                     .Where(u => u.SuburbId == crimeDetail.Suburb_Id)
+                                     .ToListAsync();
+
 
                 if (sendToCriteria.Any())
                 {
@@ -89,6 +92,47 @@ namespace Business.Repository
             {
                 throw new NullReferenceException();
             }
+
+        }
+
+        public async Task<List<UserDTO>> GetEmailSubscribersToBeNotified(CrimeDetailDTO crimeDetail)
+        {
+            List<UserDTO> SendEmailToSubscribers = new List<UserDTO>();
+
+            if (crimeDetail!=null)
+            {
+                var sendToCriteria = await _userManager.Users
+                .Where(u => u.ProvinceId == crimeDetail.Province_Id)
+                .Where(u => u.CityId == crimeDetail.City_Id)
+                .Where(u => u.SuburbId == crimeDetail.Suburb_Id)
+                .Where(u => u.EmailConfirmed == true)
+                .Where(u => u.IsEmailNotification == true)
+                .ToListAsync();
+
+                if (sendToCriteria.Any())
+                {
+                    foreach (var user in sendToCriteria)
+                    {
+                        try
+                        {
+                            SendEmailToSubscribers.Add(_mapper.Map<ApplicationUser, UserDTO>(user));
+                        }
+                        catch (Exception e)
+                        {
+
+                            throw new Exception(e.Message);
+                        }
+                        
+                    }
+                    return SendEmailToSubscribers;
+                }
+                return null;
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
+
 
         }
     }
