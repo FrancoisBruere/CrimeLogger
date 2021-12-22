@@ -3,10 +3,10 @@
 @using System.Web
 @using CrimeLogger.Shared
 
-@inject IAuthenticationService authenticationService
+@inject IAuthenticationService AuthenticationService
 @inject NavigationManager navigationManager
 @inject IJSRuntime JsRuntime
-@inject ILocalStorageService localStorage
+@inject ILocalStorageService LocalStorage
 
 <PageTitle>Login</PageTitle>
 <EditForm Model="UserForAuthentication" OnValidSubmit="LoginUser">
@@ -70,7 +70,7 @@
         ShowAuthenticationErrors = false;
         IsProcessing = true;
 
-        var result = await authenticationService.Login(UserForAuthentication);
+        var result = await AuthenticationService.Login(UserForAuthentication);
         
 
         if (result.isAuthSuccessful)
@@ -104,7 +104,7 @@
     public async Task RequestNotificationSubscriptionAsync()
     {
         var subscription = await JsRuntime.InvokeAsync<NotificationSubscriptionDTO>("blazorPushNotifications.requestSubscription");
-        var userInfo = await localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+        var userInfo = await LocalStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
        
        
         if (subscription != null)
@@ -112,7 +112,7 @@
             try
             {  
                 subscription.UserId = userInfo.Id;
-                await authenticationService.SubscribeToNotifications(subscription);
+                await AuthenticationService.SubscribeToNotifications(subscription);
             }
             catch(AccessViolationException ex)
             {

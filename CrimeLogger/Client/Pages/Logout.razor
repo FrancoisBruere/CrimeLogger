@@ -1,5 +1,5 @@
 ﻿@page "/logout"
-@inject IAuthenticationService authenticationService
+@inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Logout</PageTitle>
@@ -9,7 +9,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        await authenticationService.Logout();
+        await AuthenticationService.Logout();
         NavigationManager.NavigateTo("/");
     }
 }

@@ -7,7 +7,7 @@
 @inject ICrimeDetailService CrimeDetailService
 @inject ICrimeProvinceCitySuburbService ICrimeProvinceCitySuburb
 @inject ICrimeTypeService ICrimeType
-@inject IJSRuntime jsRuntime
+@inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 
 @*@attribute [Authorize(Roles = SD.Role_User)]*@
@@ -155,12 +155,12 @@ else
 
             AllCrimes = await CrimeDetailService.GetCrimeDetailsByTypeId((int)FilterOneValue);
 
-            await jsRuntime.ToastrSeccess("Filter applied");
+            await JsRuntime.ToastrSeccess("Filter applied");
 
             if (!AllCrimes.Any())
             {
 
-                await jsRuntime.ToastrError("No crimes available for the selected type");
+                await JsRuntime.ToastrError("No crimes available for the selected type");
                 AllCrimes = await CrimeDetailService.GetAllCrimeDetails();
 
             }
@@ -169,7 +169,7 @@ else
         {
             FilterOneValue = null;
             AllCrimes = await CrimeDetailService.GetAllCrimeDetails();
-            await jsRuntime.ToastrSeccess("Filter cleared");
+            await JsRuntime.ToastrSeccess("Filter cleared");
             StateHasChanged();
         }
     }

@@ -4,8 +4,8 @@
 @using Microsoft.AspNetCore.Authorization
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ICrimeDetailService crimeDetailService
-@inject ICrimeTypeService crimeTypeService
+@inject ICrimeDetailService CrimeDetailService
+@inject ICrimeTypeService CrimeTypeService
 @inject ICrimeProvinceCitySuburbService ICrimeProvinceCitySuburb
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
@@ -40,7 +40,6 @@ else
 <div id="app">
     <div style="position:fixed;top:50%;left:50%;margin-top:-50px; margin-left:-100px">
         <img src="/images/1495.gif" alt="loading" />
-
     </div>
 </div>
 }
@@ -70,7 +69,7 @@ else
 
             try
             {
-                CrimeTypes = await crimeTypeService.GetAllCrimeTypes();
+                CrimeTypes = await CrimeTypeService.GetAllCrimeTypes();
 
                 await LoadCrimes();
                 _crimeCount = Crimes.Count();
@@ -90,10 +89,8 @@ else
 
     private async Task LoadCrimes()
     {
-        Crimes = await crimeDetailService.GetAllCrimeDetails();
+        Crimes = await CrimeDetailService.GetAllCrimeDetails();
          
-        
-
         if (!Crimes.Any())
         {
             await JsRuntime.ToastrError("Failed to load crimes");

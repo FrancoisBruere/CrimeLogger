@@ -3,7 +3,7 @@
 
 @using System.ComponentModel
 
-@inject IAuthenticationService authenticationService
+@inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 @inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
 @inject IJSRuntime JsRuntime
@@ -130,8 +130,6 @@
         </div>
     </div>
 
-
-
 </EditForm>
 
 
@@ -169,7 +167,7 @@
         ShowRegistrationErrors = false;
         IsProcessing = true;
 
-        var result = await authenticationService.RegisterUser(UserForRegistration);
+        var result = await AuthenticationService.RegisterUser(UserForRegistration);
 
         
         if (result.isRegistrationSuccessful)
