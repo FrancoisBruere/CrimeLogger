@@ -1,12 +1,11 @@
 
 # CrimeLogger
-Crime Logger WASM Blazor - ServerAPI  - SqLiteDB - .Net6 - Using Identity - JWT Bearer - GoogleReCaptcha - Push Notifications
+Crime Logger WASM Blazor - WPA - ServerAPI  - SqLiteDB - .Net6 - Using Identity - JWT Bearer - GoogleReCaptcha - Push Notifications
 
-Application allows registered users to log crimes. MapMarkers are placed at crime locations by Geocoding address to lat and long cords storing in sqlite with crime type and the dates crimes committed. DetailsView for viewing crime detail with filter to filter by crime type. Added user profile update page for address, contact number and email notification  options. Add limit of 2 submissions per month per registered user. Added push-notification, sending notification to all registered users if a crime is reported in users registered area. 
+Application allows registered users to log crimes. MapMarkers are placed at crime locations by Geocoding address to lat and long cords storing in sqlite with crime type and the dates crimes committed. DetailsView for viewing crime detail with filter to filter by crime type. Added user profile update page for address, contact number and email notification  options. Add limit of 2 submissions per month per registered user. Added email and push-notification, sending notification to all registered users if a crime is reported in users registered area. 
 
 Currently the core is fully functional still working on:
 
-- Implement crime alert email notification.
 - HTML Design css
 - code refactor
 
