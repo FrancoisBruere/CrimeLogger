@@ -12,7 +12,7 @@
 @inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
 @inject IJSRuntime JsRuntime
 
-@attribute [Authorize(Roles = SD.Role_User)]
+@*@attribute [Authorize(Roles = SD.Role_User)]*@
 <PageTitle>Profile</PageTitle>
 
 <PageTitle>Manage Profile</PageTitle>
@@ -120,6 +120,10 @@
 
 @code {
 
+    [CascadingParameter]
+
+    public Task<AuthenticationState> authenticationState { get; set; }
+
     public UserUpdateDTO UserForUpdateDTO = new UserUpdateDTO();
     public bool IsProcessing { get; set; }
     public bool ShowRegistrationErrors { get; set; }
@@ -136,15 +140,21 @@
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+        if (!authState.User.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            var user = authState.User;
+
+            UserForUpdateDTO = await UserUpdateService.GetUserForUpdate(user.Identity.Name);
+            CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
+            CrimeCities = await CrimeProvinceCitySuburbService.GetCityDetailsByProvinceId(UserForUpdateDTO.ProvinceId);
+            CrimeSuburbs = await CrimeProvinceCitySuburbService.GetSuburbDetailsByCityId(UserForUpdateDTO.CityId);
+        }
         
-        UserForUpdateDTO = await UserUpdateService.GetUserForUpdate(user.Identity.Name);
-        CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
-        CrimeCities = await CrimeProvinceCitySuburbService.GetCityDetailsByProvinceId(UserForUpdateDTO.ProvinceId);
-        CrimeSuburbs = await CrimeProvinceCitySuburbService.GetSuburbDetailsByCityId(UserForUpdateDTO.CityId);
     }
-
-
 
     private async Task UpdateUser()
     {

@@ -18,6 +18,7 @@ namespace CrimeLogger.Server.Helper
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
+            
             MailjetClient client = new MailjetClient(_mailJetSettings.PublicKey,
                 _mailJetSettings.PrivateKey)
             {
@@ -32,7 +33,7 @@ namespace CrimeLogger.Server.Helper
                 new JObject {
                 {"From", new JObject {
                 {"Email", _mailJetSettings.Email},
-                {"Name", "CrimeLogger"}
+                {"Name", "Crimelogger"}
                 }},
                 {"To", new JArray {
                 new JObject {
@@ -45,6 +46,7 @@ namespace CrimeLogger.Server.Helper
                 {"HTMLPart", htmlMessage}
                 }
                 });
+            
             MailjetResponse response = await client.PostAsync(request);
         }
 

@@ -21,7 +21,7 @@ self.addEventListener('push', event => {
     event.waitUntil(
         self.registration.showNotification('Crimelogger', {
             body: payload.message,
-            icon: 'fingerprint3_ZO2_icon.ico',
+            icon: 'images/fingerprint3_ZO2_icon.ico',
             vibrate: [100, 50, 100],
             data: { url: payload.url }
         })

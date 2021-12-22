@@ -31,6 +31,7 @@ namespace Common
 
         public const string SubscriptionPublic_key = "BPFwQhPuYLoIlDllaKqw9NgnpZg6M00h2ZtWek5iTB8QD_aeg00h523emFhwJfudvgm2qSHf5_QK2O9S4K6auAE";
         public const string SubscriptionPrivate_key = "zfGeWbU5nIw0HNR6pb0snfk167oaArCoN6g6BUJiseg";
+        public const string Subscription_email = "mailto:<francois.bruere@gmail.com>";
 
         public const string TempLink = "https://localhost:7141/login";
     }

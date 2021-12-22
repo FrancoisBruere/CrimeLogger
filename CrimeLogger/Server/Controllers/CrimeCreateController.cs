@@ -2,6 +2,7 @@
 using Common;
 using CrimeLogger.Shared;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -87,22 +88,21 @@ namespace CrimeLogger.Server.Controllers
             {
                 try
                 {
-                   await _emailSender.SendEmailAsync(user.Email, "Crimelogger - New crime reported in your area!",
-                   $"Crime Details: {crimeType.Name}\n" +
-                   $"Street: {crimeDetail.Street}\n" +
-                   $"Description: {crimeDetail.Description}\n" +
-                   $"Crime date: {crimeDetail.CrimeDate}\n" +
-                   $"Reported date: {crimeDetail.CreatedDate}");
+                    await _emailSender.SendEmailAsync(user.Email, "Crimelogger - New crime reported in your area!",
+                    $"Crime Details: {crimeType.Name} " +
+                    $"Street: {crimeDetail.Street} " +
+                    $"Description: {crimeDetail.Description} " +
+                    $"Crime date: {crimeDetail.CrimeDate} " +
+                    $"Reported date: {crimeDetail.CreatedDate}");
                 }
+                   
                 catch (Exception ex)
                 {
 
-                    Console.WriteLine("Error sending email notification: " + ex.Message);
+                    throw new Exception("Error sending email notification: " + ex.Message);
                 }
                
             }
-            
-
         }
 
 
@@ -110,11 +110,12 @@ namespace CrimeLogger.Server.Controllers
         {
             var publicKey = SD.SubscriptionPublic_key;
             var privateKey = SD.SubscriptionPrivate_key;
+            var email = SD.Subscription_email;
 
             foreach (var subscription in subscriptions)
             {
                 var pushSubscription = new PushSubscription(subscription.Url, subscription.P256dh, subscription.Auth);
-                var vapidDetails = new VapidDetails("mailto:<francois.bruere@gmail.com>", publicKey, privateKey);
+                var vapidDetails = new VapidDetails(email, publicKey, privateKey);
                 var webPushClient = new WebPushClient();
 
                 try
@@ -128,7 +129,7 @@ namespace CrimeLogger.Server.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error sending push notification: " + ex.Message);
+                    throw new Exception("Error sending push notification: " + ex.Message);
                 }
             }
            

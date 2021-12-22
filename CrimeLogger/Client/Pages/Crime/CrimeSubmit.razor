@@ -4,6 +4,7 @@
 @using CrimeLogger.Shared
 @using Microsoft.AspNetCore.Authorization
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICrimeTypeService CrimeTypeService
 @inject ICrimeProvinceCitySuburbService CrimeProvinceCitySuburbService
 @inject ICrimeDetailService CrimeDetailService
@@ -12,7 +13,7 @@
 @inject IJSRuntime JsRuntime
 @inject ILocalStorageService localStorage
 
-@attribute [Authorize(Roles = SD.Role_User)]
+@*@attribute [Authorize(Roles = SD.Role_User)]*@
 
 <PageTitle>Submit-Crime</PageTitle>
 @if (CrimeDetailModel == null)
@@ -138,6 +139,10 @@ else
 
 @code{
 
+    [CascadingParameter]
+
+    public Task<AuthenticationState> authenticationState { get; set; }
+
     private CrimeDetailDTO CrimeDetailModel { get; set; } = new CrimeDetailDTO();
 
     private IEnumerable<CrimeProvinceDTO> CrimeProvinces { get; set; } = new List<CrimeProvinceDTO>();
@@ -171,11 +176,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        CrimeDetailModel.CrimeDate = DateTime.Now;
-
-        CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
-        CrimeTypes = await CrimeTypeService.GetAllCrimeTypes();
-
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            CrimeDetailModel.CrimeDate = DateTime.Now;
+            CrimeProvinces = await CrimeProvinceCitySuburbService.GetAllCrimeProvinces();
+            CrimeTypes = await CrimeTypeService.GetAllCrimeTypes();
+        }
     }
 
     private async Task CityChange(ChangeEventArgs args)

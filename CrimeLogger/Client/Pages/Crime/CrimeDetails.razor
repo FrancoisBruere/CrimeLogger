@@ -3,13 +3,14 @@
 @using CrimeLogger.Shared
 @using Microsoft.AspNetCore.Authorization
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICrimeDetailService crimeDetailService
 @inject ICrimeTypeService crimeTypeService
 @inject ICrimeProvinceCitySuburbService ICrimeProvinceCitySuburb
 @inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
 
-
-@attribute [Authorize(Roles =SD.Role_User)]
+@*@attribute [Authorize(Roles =SD.Role_User)]*@
 <PageTitle>Map View</PageTitle>
 @if (Crimes.Any())
 {
@@ -46,6 +47,10 @@ else
 
 @code {
 
+    [CascadingParameter]
+
+    public Task<AuthenticationState> authenticationState { get; set; }
+
     private int zoom = 5;
     //private string clickedPosition = "";
     private int _crimeCount = 0;
@@ -55,18 +60,26 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-
-        try
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity.IsAuthenticated)
         {
-            CrimeTypes = await crimeTypeService.GetAllCrimeTypes();
-
-            await LoadCrimes();
-            _crimeCount = Crimes.Count();
+            NavigationManager.NavigateTo("/login");
         }
-        catch (Exception e)
+        else
         {
 
-            await JsRuntime.ToastrError(e.Message);
+            try
+            {
+                CrimeTypes = await crimeTypeService.GetAllCrimeTypes();
+
+                await LoadCrimes();
+                _crimeCount = Crimes.Count();
+            }
+            catch (Exception e)
+            {
+
+                await JsRuntime.ToastrError(e.Message);
+            }
         }
     }
 

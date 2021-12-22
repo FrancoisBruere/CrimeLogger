@@ -3,13 +3,14 @@
 @using CrimeLogger.Shared
 @using Microsoft.AspNetCore.Authorization
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICrimeDetailService CrimeDetailService
 @inject ICrimeProvinceCitySuburbService ICrimeProvinceCitySuburb
 @inject ICrimeTypeService ICrimeType
 @inject IJSRuntime jsRuntime
 @inject NavigationManager NavigationManager
 
-@attribute [Authorize(Roles = SD.Role_User)]
+@*@attribute [Authorize(Roles = SD.Role_User)]*@
 <PageTitle>Detail View</PageTitle>
 @if (!AllCrimes.Any())
 {
@@ -113,6 +114,10 @@ else
 
 @code {
 
+    [CascadingParameter]
+
+    public Task<AuthenticationState> authenticationState { get; set; }
+
     private IEnumerable<CrimeProvinceDTO> CrimeProvinces { get; set; } = new List<CrimeProvinceDTO>();
     private IEnumerable<CrimeCityDTO> CrimeCities { get; set; } = new List<CrimeCityDTO>();
     private IEnumerable<CrimeSuburbDTO> CrimeSuburbs { get; set; } = new List<CrimeSuburbDTO>();
@@ -124,14 +129,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        //CrimeDetails.CrimeDetail = new CrimeDetailDTO();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
 
-        AllCrimes = await CrimeDetailService.GetAllCrimeDetails();
-        CrimeTypes = await ICrimeType.GetAllCrimeTypes();
-        CrimeProvinces = await ICrimeProvinceCitySuburb.GetAllCrimeProvinces();
-        CrimeCities = await ICrimeProvinceCitySuburb.GetAllCrimeCities();
-        CrimeSuburbs = await ICrimeProvinceCitySuburb.GetAllCrimeSuburbs();
-
+            AllCrimes = await CrimeDetailService.GetAllCrimeDetails();
+            CrimeTypes = await ICrimeType.GetAllCrimeTypes();
+            CrimeProvinces = await ICrimeProvinceCitySuburb.GetAllCrimeProvinces();
+            CrimeCities = await ICrimeProvinceCitySuburb.GetAllCrimeCities();
+            CrimeSuburbs = await ICrimeProvinceCitySuburb.GetAllCrimeSuburbs();
+        }
     }
 
     private async Task FilterType(ChangeEventArgs e)
