@@ -6,11 +6,14 @@ Application allows registered users to log crimes. MapMarkers are placed at crim
 
 Currently the core is fully functional still working on:
 
+- resend email confirmation
+- bug hosted PWA email confirmation error
+- bug Andriod PWA not loading 
 - HTML Design css
 - code refactor
 
 
-![Page1](https://user-images.githubusercontent.com/85226595/142839705-0ca1c26d-2659-4ef3-bea1-7b09aeee751c.png)
+![Page1](https://user-images.githubusercontent.com/85226595/147097737-ee755f81-f4cc-42e9-a485-d081b884d115.png)
 ![Page2](https://user-images.githubusercontent.com/85226595/142839713-ec34a701-6a34-42e2-b31a-9adf8c965162.png)
 ![Page3](https://user-images.githubusercontent.com/85226595/142839715-38dc4c91-bd9e-4481-89f6-cc53ad816f2b.png)
 ![Page4](https://user-images.githubusercontent.com/85226595/142839718-d164b3aa-47a5-4a4b-8640-7a7c93a76f2d.png)
