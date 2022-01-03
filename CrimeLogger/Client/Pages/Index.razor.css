@@ -36,14 +36,15 @@
     height: 50%;
     width: 40%;
     position: absolute;
-    right: 5%;
+    right: 10%;
 }
 
 @media(max-width: 991px) {
     .title-img {
+        margin-top:50px;
         width: 40%;
         right: 22%;
-        position: static;
+        position: absolute;
     }
 
     #title {
@@ -69,37 +70,10 @@
     color: #464660;
 }
 
-.press-logo {
-    width: 50%;
-    margin: 20px 20px 20px;
-    justify-content: center;
-    text-align: center;
-}
-
-.pricing-headers {
-    font-size: 1.5rem;
-    justify-content: center;
-    text-align: center;
-}
-
-.pricing-h2 {
-    font-size: 2.5rem;
-    line-height: 4.5rem;
-    justify-content: center;
-    text-align: center;
-}
 
 .card {
     justify-content: center;
     text-align: center;
-}
-
-#pricing {
-    padding: 100px;
-}
-
-.pricing-col {
-    padding: 3% 2%;
 }
 
 #cta {
@@ -124,35 +98,6 @@
     margin: 30px 10px;
 }
 
-.adds {
-    background-color: #000000;
-    padding-bottom: 3%;
-    justify-content: center;
-    text-align: center;
-}
-
-#testimonials {
-    background-color: #000000;
-    justify-content: center;
-    text-align: center;
-}
-
-.testimonial-img {
-    width: 10%;
-    border-radius: 100%;
-    margin: 20px;
-}
-
-.testimonial-text {
-    font-size: 2.5rem;
-    line-height: 4.5rem;
-    justify-content: center;
-    text-align: center;
-}
-
-.carousel-item {
-    padding: 7% 15%;
-}
 
 .colored-section {
     background-color: #FF2626;

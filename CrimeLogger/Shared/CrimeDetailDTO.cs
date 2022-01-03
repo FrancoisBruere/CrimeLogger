@@ -32,7 +32,7 @@ namespace CrimeLogger.Shared
         [Required(ErrorMessage = "Please enter the date the crime took place")]
         public DateTime? CrimeDate { get; set; }
 
-        [Range(typeof(bool), "true", "true", ErrorMessage = "Please acknowledge that the above crime details entered are valid and correct and that the crime committed was/is related to the registered user account")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Please acknowledge that the above crime details entered is valid and correct")]
         public bool IsTrueCrime { get; set; }
         public bool IsMarkerAdded { get; set; } = false;
         public double MyLat { get; set; }

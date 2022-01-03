@@ -142,9 +142,7 @@ namespace CrimeLogger.Server.Controllers
                     UserDTO = new UserDTO
                     {
                         Id = user.Id,
-                        Name = user.Email,
-                        Email = user.Email,
-                        PhoneNo = user.PhoneNumber
+                                                
                     }
                 });
             }
