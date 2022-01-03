@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace CrimeLogger.Server.Controllers
 {
@@ -24,12 +26,21 @@ namespace CrimeLogger.Server.Controllers
             var user = await _userManager.FindByNameAsync(email);
             if (user == null)
                 return View("Error");
+            //try
+            //{
+            //    token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            //}
+            //catch (Exception ex)
+            //{
+
+            //    throw new Exception(ex.Message);
+            //}
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
                 
-                return View("ConfirmedEmail");
+                return View("confirmedemail");
             }
             else
             {
