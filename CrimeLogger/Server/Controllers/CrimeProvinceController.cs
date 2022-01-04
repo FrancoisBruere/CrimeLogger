@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
-    [Controller]
+    [ApiController]
+
     public class CrimeProvinceController : Controller
     {
         private readonly ICrimeProvinceRepository _crimeProvinceRepository;
@@ -16,6 +17,7 @@ namespace CrimeLogger.Server.Controllers
         }
 
         [HttpGet]
+
         public async Task<IActionResult> GetCrimeProvinces()
         {
             var allProvinces = await _crimeProvinceRepository.GetAllCrimeProvinces();

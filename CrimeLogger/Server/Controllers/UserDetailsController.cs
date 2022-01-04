@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CrimeLogger.Server.Controllers
 {
     [Route("api/[controller]")]
-    [Controller]
+    [ApiController]
     [Authorize]   
     
     public class UserDetailsController : Controller

@@ -33,6 +33,6 @@ namespace Common
         public const string SubscriptionPrivate_key = "zfGeWbU5nIw0HNR6pb0snfk167oaArCoN6g6BUJiseg";
         public const string Subscription_email = "mailto:<francois.bruere@gmail.com>";
 
-        public const string TempLink = "https://localhost:7141/login";
+        public const string TempLink = "https://crimeloggerserver20220104130942.azurewebsites.net/";
     }
 }

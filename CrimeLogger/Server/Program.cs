@@ -82,7 +82,7 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddCors(o => o.AddPolicy("CrimeLogger", builder =>
 {
     builder.WithOrigins("https://localhost:7141",
-        "https://crimeloggerserver20220103213646.azurewebsites.net")
+        "https://crimeloggerserver20220104130942.azurewebsites.net")
     .AllowAnyMethod()
     .AllowAnyHeader();
 
